@@ -4,9 +4,7 @@ import { JourneyNode } from "@/components/JourneyNode";
 import { levels, lessons, dailyVerses, dailyChallenges } from "@/data/lessons";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, Flame, Star, ChevronRight } from "lucide-react";
-
-const container = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
-const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { type: "spring", duration: 0.5, bounce: 0.1 } } };
+import { staggerContainer, fadeInUp } from "@/lib/animations";
 
 const Dashboard = () => {
   const { progress } = useProgress();
@@ -22,19 +20,16 @@ const Dashboard = () => {
   const challenge = dailyChallenges[todayIndex % dailyChallenges.length];
 
   const greeting = progress.userName ? `Peace be with you, ${progress.userName}.` : "Peace be with you.";
-
-  // Find next incomplete lesson
   const nextLesson = levelLessons.find((l) => !progress.completedLessons.includes(l.id));
 
   return (
     <motion.div
       className="min-h-screen bg-background pb-24 px-5 pt-12 max-w-lg mx-auto"
-      variants={container}
+      variants={staggerContainer}
       initial="hidden"
       animate="show"
     >
-      {/* Greeting */}
-      <motion.div variants={item} className="mb-8">
+      <motion.div variants={fadeInUp} className="mb-8">
         <h1 className="text-2xl font-display font-semibold text-foreground tracking-tight">{greeting}</h1>
         <div className="flex items-center gap-3 mt-2">
           <div className="flex items-center gap-1 text-sm text-accent-foreground">
@@ -48,15 +43,13 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
-      {/* Journey Node */}
-      <motion.div variants={item} className="mb-8">
+      <motion.div variants={fadeInUp} className="mb-8">
         <JourneyNode progress={levelProgress} level={currentLevel.id} title={currentLevel.title} />
       </motion.div>
 
-      {/* Continue Journey */}
       {nextLesson && (
         <motion.button
-          variants={item}
+          variants={fadeInUp}
           onClick={() => navigate(`/lesson/${nextLesson.id}`)}
           className="w-full card-ceramic flex items-center justify-between mb-4 active:scale-[1.02] transition-transform"
         >
@@ -68,22 +61,19 @@ const Dashboard = () => {
         </motion.button>
       )}
 
-      {/* Daily Challenge */}
-      <motion.div variants={item} className="card-ceramic mb-4 bg-primary/5 border-primary/20">
+      <motion.div variants={fadeInUp} className="card-ceramic mb-4 bg-primary/5 border-primary/20">
         <span className="text-micro text-primary">Daily Challenge</span>
         <p className="text-sm text-foreground mt-2 leading-relaxed">{challenge}</p>
       </motion.div>
 
-      {/* Verse of the Day */}
-      <motion.div variants={item} className="card-ceramic mb-4">
+      <motion.div variants={fadeInUp} className="card-ceramic mb-4">
         <span className="text-micro">Verse of the Day</span>
         <p className="text-base font-display italic text-foreground mt-3 leading-relaxed">"{verse.verse}"</p>
         <p className="text-sm text-muted-foreground mt-2">— {verse.ref}</p>
       </motion.div>
 
-      {/* Recent Journal */}
       {progress.journalEntries.length > 0 && (
-        <motion.div variants={item}>
+        <motion.div variants={fadeInUp}>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-micro">Recent Journal</h3>
             <button onClick={() => navigate("/journal")} className="text-xs text-primary font-medium">View All</button>
@@ -100,19 +90,12 @@ const Dashboard = () => {
         </motion.div>
       )}
 
-      {/* Quick Actions */}
-      <motion.div variants={item} className="mt-6 grid grid-cols-2 gap-3">
-        <button
-          onClick={() => navigate("/path")}
-          className="card-ceramic p-4 text-left active:scale-[1.02] transition-transform"
-        >
+      <motion.div variants={fadeInUp} className="mt-6 grid grid-cols-2 gap-3">
+        <button onClick={() => navigate("/path")} className="card-ceramic p-4 text-left active:scale-[1.02] transition-transform">
           <BookOpen className="w-5 h-5 text-primary mb-2" />
           <span className="text-sm font-medium text-foreground">Learning Path</span>
         </button>
-        <button
-          onClick={() => navigate("/journal")}
-          className="card-ceramic p-4 text-left active:scale-[1.02] transition-transform"
-        >
+        <button onClick={() => navigate("/journal")} className="card-ceramic p-4 text-left active:scale-[1.02] transition-transform">
           <BookOpen className="w-5 h-5 text-secondary mb-2" />
           <span className="text-sm font-medium text-foreground">Journal</span>
         </button>

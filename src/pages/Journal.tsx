@@ -2,12 +2,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useProgress } from "@/hooks/useProgress";
 import { Plus, X } from "lucide-react";
+import { staggerContainer, fadeInUp } from "@/lib/animations";
 
-const container = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
-const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { type: "spring", duration: 0.5, bounce: 0.1 } } };
-
-const typeLabels = { prayer: "🙏 Prayer", reflection: "✍️ Reflection", thought: "💭 Thought" };
-const typeColors = { prayer: "bg-primary/5 border-primary/10", reflection: "bg-accent/5 border-accent/10", thought: "bg-secondary/10 border-secondary/20" };
+const typeLabels: Record<string, string> = { prayer: "🙏 Prayer", reflection: "✍️ Reflection", thought: "💭 Thought" };
+const typeColors: Record<string, string> = { prayer: "bg-primary/5 border-primary/10", reflection: "bg-accent/5 border-accent/10", thought: "bg-secondary/10 border-secondary/20" };
 
 const Journal = () => {
   const { progress, addJournalEntry } = useProgress();
@@ -25,11 +23,11 @@ const Journal = () => {
   return (
     <motion.div
       className="min-h-screen bg-background pb-24 px-5 pt-12 max-w-lg mx-auto"
-      variants={container}
+      variants={staggerContainer}
       initial="hidden"
       animate="show"
     >
-      <motion.div variants={item} className="flex items-center justify-between mb-8">
+      <motion.div variants={fadeInUp} className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-display font-semibold text-foreground tracking-tight">Journal</h1>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -39,12 +37,10 @@ const Journal = () => {
         </button>
       </motion.div>
 
-      {/* New Entry Form */}
       {showForm && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
           className="card-ceramic mb-6"
         >
           <span className="text-micro mb-3 block">New Entry</span>
@@ -54,9 +50,7 @@ const Journal = () => {
                 key={type}
                 onClick={() => setEntryType(type)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  entryType === type
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
+                  entryType === type ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                 }`}
               >
                 {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -67,11 +61,7 @@ const Journal = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={
-              entryType === "prayer"
-                ? "Dear God..."
-                : entryType === "reflection"
-                ? "Today I learned..."
-                : "I've been thinking about..."
+              entryType === "prayer" ? "Dear God..." : entryType === "reflection" ? "Today I learned..." : "I've been thinking about..."
             }
             className="w-full h-32 p-4 rounded-xl bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all font-body leading-relaxed"
           />
@@ -85,9 +75,8 @@ const Journal = () => {
         </motion.div>
       )}
 
-      {/* Entries */}
       {progress.journalEntries.length === 0 ? (
-        <motion.div variants={item} className="text-center py-16">
+        <motion.div variants={fadeInUp} className="text-center py-16">
           <p className="text-4xl mb-3">📝</p>
           <p className="text-muted-foreground text-sm">Your journal is empty.</p>
           <p className="text-muted-foreground text-sm mt-1">Tap + to write your first entry.</p>
@@ -95,11 +84,7 @@ const Journal = () => {
       ) : (
         <div className="space-y-3">
           {progress.journalEntries.map((entry) => (
-            <motion.div
-              key={entry.id}
-              variants={item}
-              className={`card-ceramic ${typeColors[entry.type]}`}
-            >
+            <motion.div key={entry.id} variants={fadeInUp} className={`card-ceramic ${typeColors[entry.type]}`}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-micro">{typeLabels[entry.type]}</span>
                 <span className="text-xs text-muted-foreground">

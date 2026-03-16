@@ -3,9 +3,7 @@ import { useProgress } from "@/hooks/useProgress";
 import { levels, lessons } from "@/data/lessons";
 import { useNavigate } from "react-router-dom";
 import { Check, Lock, ChevronRight } from "lucide-react";
-
-const container = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
-const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { type: "spring", duration: 0.5, bounce: 0.1 } } };
+import { staggerContainer, fadeInUp } from "@/lib/animations";
 
 const LearningPath = () => {
   const { progress } = useProgress();
@@ -20,11 +18,11 @@ const LearningPath = () => {
   return (
     <motion.div
       className="min-h-screen bg-background pb-24 px-5 pt-12 max-w-lg mx-auto"
-      variants={container}
+      variants={staggerContainer}
       initial="hidden"
       animate="show"
     >
-      <motion.h1 variants={item} className="text-2xl font-display font-semibold text-foreground tracking-tight mb-8">
+      <motion.h1 variants={fadeInUp} className="text-2xl font-display font-semibold text-foreground tracking-tight mb-8">
         Your Journey
       </motion.h1>
 
@@ -35,8 +33,7 @@ const LearningPath = () => {
         const allComplete = completedCount === levelLessons.length;
 
         return (
-          <motion.div key={level.id} variants={item} className="mb-6">
-            {/* Level Header */}
+          <motion.div key={level.id} variants={fadeInUp} className="mb-6">
             <div className={`card-ceramic ${!unlocked ? "opacity-50" : ""}`}>
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-2xl">{level.icon}</span>
@@ -52,7 +49,6 @@ const LearningPath = () => {
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed mb-4">{level.description}</p>
 
-              {/* Progress bar */}
               <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
                 <motion.div
                   className="h-full bg-primary rounded-full"
@@ -62,7 +58,6 @@ const LearningPath = () => {
                 />
               </div>
 
-              {/* Lessons */}
               {unlocked && (
                 <div className="mt-4 space-y-2">
                   {levelLessons.map((lesson) => {
@@ -73,9 +68,7 @@ const LearningPath = () => {
                         onClick={() => navigate(`/lesson/${lesson.id}`)}
                         className="w-full flex items-center gap-3 p-3 rounded-xl bg-background border border-border hover:border-primary/30 transition-all text-left active:scale-[1.02]"
                       >
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          completed ? "bg-primary" : "bg-muted"
-                        }`}>
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${completed ? "bg-primary" : "bg-muted"}`}>
                           {completed ? (
                             <Check className="w-3.5 h-3.5 text-primary-foreground" />
                           ) : (

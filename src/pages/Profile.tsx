@@ -2,10 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useProgress } from "@/hooks/useProgress";
 import { badges, readingPlans } from "@/data/lessons";
-import { Award, BookOpen, ChevronRight, Flame, Star, User } from "lucide-react";
-
-const container = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
-const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { type: "spring", duration: 0.5, bounce: 0.1 } } };
+import { Award, BookOpen, Flame, Star, User } from "lucide-react";
+import { staggerContainer, fadeInUp } from "@/lib/animations";
 
 const Profile = () => {
   const { progress, setUserName, startReadingPlan, advanceReadingPlan } = useProgress();
@@ -22,12 +20,11 @@ const Profile = () => {
   return (
     <motion.div
       className="min-h-screen bg-background pb-24 px-5 pt-12 max-w-lg mx-auto"
-      variants={container}
+      variants={staggerContainer}
       initial="hidden"
       animate="show"
     >
-      {/* Profile Header */}
-      <motion.div variants={item} className="card-ceramic text-center mb-6">
+      <motion.div variants={fadeInUp} className="card-ceramic text-center mb-6">
         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
           <User className="w-7 h-7 text-primary" />
         </div>
@@ -75,8 +72,7 @@ const Profile = () => {
         </div>
       </motion.div>
 
-      {/* Badges */}
-      <motion.div variants={item} className="mb-6">
+      <motion.div variants={fadeInUp} className="mb-6">
         <div className="flex items-center gap-2 mb-3">
           <Award className="w-4 h-4 text-accent" />
           <h2 className="text-micro">Achievements</h2>
@@ -85,10 +81,7 @@ const Profile = () => {
           {badges.map((badge) => {
             const earned = progress.earnedBadges.includes(badge.id);
             return (
-              <div
-                key={badge.id}
-                className={`card-ceramic p-4 ${earned ? "" : "opacity-40"}`}
-              >
+              <div key={badge.id} className={`card-ceramic p-4 ${earned ? "" : "opacity-40"}`}>
                 <span className="text-2xl block mb-1">{badge.icon}</span>
                 <p className="text-sm font-medium text-foreground">{badge.title}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{badge.description}</p>
@@ -98,8 +91,7 @@ const Profile = () => {
         </div>
       </motion.div>
 
-      {/* Reading Plans */}
-      <motion.div variants={item}>
+      <motion.div variants={fadeInUp}>
         <div className="flex items-center gap-2 mb-3">
           <BookOpen className="w-4 h-4 text-primary" />
           <h2 className="text-micro">Bible Reading Plans</h2>
@@ -120,29 +112,18 @@ const Profile = () => {
                     {started && (
                       <div className="mt-2">
                         <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-primary rounded-full transition-all"
-                            style={{ width: `${progressPercent}%` }}
-                          />
+                          <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${progressPercent}%` }} />
                         </div>
-                        <span className="text-xs text-muted-foreground mt-1 block">
-                          {chaptersRead} / {plan.chapters} chapters
-                        </span>
+                        <span className="text-xs text-muted-foreground mt-1 block">{chaptersRead} / {plan.chapters} chapters</span>
                       </div>
                     )}
                   </div>
                   {!started ? (
-                    <button
-                      onClick={() => startReadingPlan(plan.id)}
-                      className="px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-medium"
-                    >
+                    <button onClick={() => startReadingPlan(plan.id)} className="px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
                       Start
                     </button>
                   ) : chaptersRead < plan.chapters ? (
-                    <button
-                      onClick={() => advanceReadingPlan(plan.id)}
-                      className="px-3 py-1.5 rounded-full bg-muted text-foreground text-xs font-medium"
-                    >
+                    <button onClick={() => advanceReadingPlan(plan.id)} className="px-3 py-1.5 rounded-full bg-muted text-foreground text-xs font-medium">
                       +1
                     </button>
                   ) : (
