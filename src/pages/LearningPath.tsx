@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useProgress } from "@/hooks/useProgress";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { levels, lessons } from "@/data/lessons";
 import { useNavigate } from "react-router-dom";
 import { Check, Lock, ChevronRight } from "lucide-react";
@@ -7,6 +8,7 @@ import { staggerContainer, fadeInUp } from "@/lib/animations";
 
 const LearningPath = () => {
   const { progress } = useProgress();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const isLevelUnlocked = (levelId: number) => {
@@ -23,7 +25,7 @@ const LearningPath = () => {
       animate="show"
     >
       <motion.h1 variants={fadeInUp} className="text-2xl font-display font-semibold text-foreground tracking-tight mb-8">
-        Your Journey
+        {t("path.title")}
       </motion.h1>
 
       {levels.map((level) => {
@@ -31,6 +33,8 @@ const LearningPath = () => {
         const levelLessons = lessons.filter((l) => l.levelId === level.id);
         const completedCount = levelLessons.filter((l) => progress.completedLessons.includes(l.id)).length;
         const allComplete = completedCount === levelLessons.length;
+        const levelTitle = t(`level.${level.id}.title` as any);
+        const levelDesc = t(`level.${level.id}.description` as any);
 
         return (
           <motion.div key={level.id} variants={fadeInUp} className="mb-6">
@@ -39,15 +43,15 @@ const LearningPath = () => {
                 <span className="text-2xl">{level.icon}</span>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-micro">Level {level.id}</span>
+                    <span className="text-micro">{t("path.level")} {level.id}</span>
                     {allComplete && <Check className="w-3.5 h-3.5 text-secondary" />}
                     {!unlocked && <Lock className="w-3.5 h-3.5 text-muted-foreground" />}
                   </div>
-                  <h2 className="text-lg font-display font-semibold text-foreground">{level.title}</h2>
+                  <h2 className="text-lg font-display font-semibold text-foreground">{levelTitle}</h2>
                 </div>
                 <span className="text-sm text-muted-foreground">{completedCount}/{levelLessons.length}</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4">{level.description}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">{levelDesc}</p>
 
               <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
                 <motion.div
@@ -62,6 +66,7 @@ const LearningPath = () => {
                 <div className="mt-4 space-y-2">
                   {levelLessons.map((lesson) => {
                     const completed = progress.completedLessons.includes(lesson.id);
+                    const lessonTitle = t(`lesson.${lesson.id}.title` as any);
                     return (
                       <button
                         key={lesson.id}
@@ -77,10 +82,10 @@ const LearningPath = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className={`text-sm font-medium truncate ${completed ? "text-muted-foreground" : "text-foreground"}`}>
-                            {lesson.title}
+                            {lessonTitle}
                           </p>
                           <span className="text-xs text-muted-foreground">
-                            {lesson.type === "quiz" ? "Quiz" : "Lesson"} · {lesson.xp} XP
+                            {lesson.type === "quiz" ? t("path.quiz") : t("path.lesson")} · {lesson.xp} XP
                           </span>
                         </div>
                         <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />

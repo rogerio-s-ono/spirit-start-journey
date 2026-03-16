@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useProgress } from "@/hooks/useProgress";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { badges, readingPlans } from "@/data/lessons";
 import { Award, BookOpen, Flame, Star, User } from "lucide-react";
 import { staggerContainer, fadeInUp } from "@/lib/animations";
 
 const Profile = () => {
   const { progress, setUserName, startReadingPlan, advanceReadingPlan } = useProgress();
+  const { t } = useLanguage();
   const [nameInput, setNameInput] = useState(progress.userName);
   const [editingName, setEditingName] = useState(!progress.userName);
 
@@ -33,17 +35,17 @@ const Profile = () => {
             <input
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
-              placeholder="Your name"
+              placeholder={t("profile.yourName")}
               className="flex-1 px-3 py-2 rounded-xl bg-background border border-border text-sm text-foreground text-center focus:outline-none focus:ring-2 focus:ring-primary/20"
               onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
             />
             <button onClick={handleSaveName} className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium">
-              Save
+              {t("profile.save")}
             </button>
           </div>
         ) : (
           <button onClick={() => setEditingName(true)} className="text-lg font-display font-semibold text-foreground">
-            {progress.userName || "Set your name"}
+            {progress.userName || t("profile.setName")}
           </button>
         )}
 
@@ -53,21 +55,21 @@ const Profile = () => {
               <Star className="w-4 h-4 text-accent" />
               <span className="text-lg font-semibold text-foreground">{progress.xp}</span>
             </div>
-            <span className="text-micro">XP</span>
+            <span className="text-micro">{t("profile.xp")}</span>
           </div>
           <div className="text-center">
             <div className="flex items-center gap-1 justify-center">
               <Flame className="w-4 h-4 text-accent" />
               <span className="text-lg font-semibold text-foreground">{progress.streak}</span>
             </div>
-            <span className="text-micro">Streak</span>
+            <span className="text-micro">{t("profile.streak")}</span>
           </div>
           <div className="text-center">
             <div className="flex items-center gap-1 justify-center">
               <BookOpen className="w-4 h-4 text-primary" />
               <span className="text-lg font-semibold text-foreground">{progress.completedLessons.length}</span>
             </div>
-            <span className="text-micro">Lessons</span>
+            <span className="text-micro">{t("profile.lessons")}</span>
           </div>
         </div>
       </motion.div>
@@ -75,16 +77,18 @@ const Profile = () => {
       <motion.div variants={fadeInUp} className="mb-6">
         <div className="flex items-center gap-2 mb-3">
           <Award className="w-4 h-4 text-accent" />
-          <h2 className="text-micro">Achievements</h2>
+          <h2 className="text-micro">{t("profile.achievements")}</h2>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {badges.map((badge) => {
             const earned = progress.earnedBadges.includes(badge.id);
+            const badgeTitle = t(`badge.${badge.id}.title` as any);
+            const badgeDesc = t(`badge.${badge.id}.desc` as any);
             return (
               <div key={badge.id} className={`card-ceramic p-4 ${earned ? "" : "opacity-40"}`}>
                 <span className="text-2xl block mb-1">{badge.icon}</span>
-                <p className="text-sm font-medium text-foreground">{badge.title}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{badge.description}</p>
+                <p className="text-sm font-medium text-foreground">{badgeTitle}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{badgeDesc}</p>
               </div>
             );
           })}
@@ -94,40 +98,42 @@ const Profile = () => {
       <motion.div variants={fadeInUp}>
         <div className="flex items-center gap-2 mb-3">
           <BookOpen className="w-4 h-4 text-primary" />
-          <h2 className="text-micro">Bible Reading Plans</h2>
+          <h2 className="text-micro">{t("profile.readingPlans")}</h2>
         </div>
         <div className="space-y-3">
           {readingPlans.map((plan) => {
             const chaptersRead = progress.readingPlans[plan.id] || 0;
             const started = plan.id in progress.readingPlans;
             const progressPercent = (chaptersRead / plan.chapters) * 100;
+            const planTitle = t(`plan.${plan.id}.title` as any);
+            const planDesc = t(`plan.${plan.id}.desc` as any);
 
             return (
               <div key={plan.id} className="card-ceramic">
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">{plan.icon}</span>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">{plan.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{plan.description}</p>
+                    <p className="text-sm font-medium text-foreground">{planTitle}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{planDesc}</p>
                     {started && (
                       <div className="mt-2">
                         <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
                           <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${progressPercent}%` }} />
                         </div>
-                        <span className="text-xs text-muted-foreground mt-1 block">{chaptersRead} / {plan.chapters} chapters</span>
+                        <span className="text-xs text-muted-foreground mt-1 block">{chaptersRead} / {plan.chapters} {t("profile.chapters")}</span>
                       </div>
                     )}
                   </div>
                   {!started ? (
                     <button onClick={() => startReadingPlan(plan.id)} className="px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
-                      Start
+                      {t("profile.start")}
                     </button>
                   ) : chaptersRead < plan.chapters ? (
                     <button onClick={() => advanceReadingPlan(plan.id)} className="px-3 py-1.5 rounded-full bg-muted text-foreground text-xs font-medium">
                       +1
                     </button>
                   ) : (
-                    <span className="text-xs text-secondary font-medium">Done ✓</span>
+                    <span className="text-xs text-secondary font-medium">{t("profile.done")}</span>
                   )}
                 </div>
               </div>
