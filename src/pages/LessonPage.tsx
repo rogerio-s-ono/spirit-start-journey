@@ -2,23 +2,51 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProgress } from "@/hooks/useProgress";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { lessons } from "@/data/lessons";
-import { ArrowLeft, Check, Play } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import type { Quiz } from "@/data/lessons";
 
 const LessonPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { progress, completeLesson, answerQuiz } = useProgress();
+  const { t } = useLanguage();
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
 
   const lesson = lessons.find((l) => l.id === id);
-  if (!lesson) return <div className="p-8 text-center text-muted-foreground">Lesson not found</div>;
+  if (!lesson) return <div className="p-8 text-center text-muted-foreground">{t("lesson.notFound")}</div>;
 
   const isCompleted = progress.completedLessons.includes(lesson.id);
   const isQuiz = lesson.type === "quiz";
   const quiz = isQuiz ? (lesson as Quiz) : null;
+
+  const lessonTitle = t(`lesson.${lesson.id}.title` as any);
+  const lessonDesc = t(`lesson.${lesson.id}.description` as any);
+  const lessonReflection = t(`lesson.${lesson.id}.reflection` as any);
+
+  // Map bible refs to verse translation keys
+  const verseKeyMap: Record<string, string> = {
+    "John 3:16": "verse.john3:16",
+    "Mark 8:36": "verse.mark8:36",
+    "St. Augustine": "verse.augustine",
+    "Ephesians 2:8": "verse.eph2:8",
+    "John 14:6": "verse.john14:6",
+    "Romans 3:23": "verse.rom3:23",
+    "John 3:3": "verse.john3:3",
+    "James 4:8": "verse.james4:8",
+    "Philippians 4:6": "verse.phil4:6",
+    "Psalm 119:105": "verse.psalm119:105",
+    "2 Timothy 3:16": "verse.2tim3:16",
+    "Habakkuk 2:2": "verse.hab2:2",
+    "Psalm 46:10": "verse.psalm46:10",
+    "1 Corinthians 10:13": "verse.1cor10:13",
+    "1 Corinthians 10:31": "verse.1cor10:31",
+    "Joshua 24:15": "verse.josh24:15",
+    "Matthew 18:20": "verse.matt18:20",
+    "1 Peter 3:15": "verse.1pet3:15",
+  };
 
   const handleComplete = () => {
     completeLesson(lesson.id, lesson.xp);
@@ -46,8 +74,8 @@ const LessonPage = () => {
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <div className="flex-1 min-w-0">
-            <span className="text-micro">{isQuiz ? "Reflection Quiz" : "Lesson"}</span>
-            <p className="text-sm font-medium text-foreground truncate">{lesson.title}</p>
+            <span className="text-micro">{isQuiz ? t("lesson.reflectionQuiz") : t("lesson.lesson")}</span>
+            <p className="text-sm font-medium text-foreground truncate">{lessonTitle}</p>
           </div>
           {isCompleted && (
             <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
@@ -58,98 +86,96 @@ const LessonPage = () => {
       </div>
 
       <div className="px-5 pt-6">
-        <h1 className="text-2xl font-display font-semibold text-foreground tracking-tight mb-4">{lesson.title}</h1>
+        <h1 className="text-2xl font-display font-semibold text-foreground tracking-tight mb-4">{lessonTitle}</h1>
 
         {isQuiz && quiz ? (
-          /* Quiz Content */
           <div>
-            <p className="text-base text-foreground leading-relaxed mb-6">{quiz.question}</p>
+            <p className="text-base text-foreground leading-relaxed mb-6">
+              {t(`lesson.${lesson.id}.question` as any)}
+            </p>
             <div className="space-y-3">
-              {quiz.options.map((option) => (
-                <button
-                  key={option.label}
-                  onClick={() => handleQuizSelect(option.label)}
-                  className={`w-full p-4 rounded-2xl border-2 text-left transition-all active:scale-[1.02] ${
-                    selectedAnswer === option.label
-                      ? "border-primary bg-primary/5"
-                      : "border-transparent bg-card shadow-soft hover:border-primary/20"
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <span className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-semibold ${
-                      selectedAnswer === option.label
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground"
-                    }`}>
-                      {option.label}
-                    </span>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{option.text}</p>
-                      {showResult && selectedAnswer === option.label && (
-                        <motion.p
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          className="text-sm text-muted-foreground mt-2 leading-relaxed"
-                        >
-                          {option.description}
-                        </motion.p>
-                      )}
+              {(["A", "B", "C"] as const).map((label) => {
+                const optionText = t(`lesson.${lesson.id}.option${label}` as any);
+                const optionDesc = t(`lesson.${lesson.id}.option${label}.desc` as any);
+                return (
+                  <button
+                    key={label}
+                    onClick={() => handleQuizSelect(label)}
+                    className={`w-full p-4 rounded-2xl border-2 text-left transition-all active:scale-[1.02] ${
+                      selectedAnswer === label
+                        ? "border-primary bg-primary/5"
+                        : "border-transparent bg-card shadow-soft hover:border-primary/20"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-semibold ${
+                        selectedAnswer === label
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
+                      }`}>
+                        {label}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{optionText}</p>
+                        {showResult && selectedAnswer === label && (
+                          <motion.p
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            className="text-sm text-muted-foreground mt-2 leading-relaxed"
+                          >
+                            {optionDesc}
+                          </motion.p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           </div>
         ) : (
-          /* Lesson Content */
           <div>
-            <p className="text-base text-foreground leading-relaxed mb-6">
-              {"description" in lesson ? lesson.description : ""}
-            </p>
+            <p className="text-base text-foreground leading-relaxed mb-6">{lessonDesc}</p>
 
-            {/* Bible Verse */}
-            {"bibleVerse" in lesson && (
+            {"bibleVerse" in lesson && lesson.bibleVerse && lesson.bibleRef && (
               <div className="card-ceramic bg-primary/5 border-primary/10 mb-6">
                 <p className="text-base font-display italic text-foreground leading-relaxed">
-                  "{lesson.bibleVerse}"
+                  "{t((verseKeyMap[lesson.bibleRef] || "") as any) || lesson.bibleVerse}"
                 </p>
                 <p className="text-sm text-primary mt-2 font-medium">— {lesson.bibleRef}</p>
               </div>
             )}
 
-            {/* Video */}
             {"videoUrl" in lesson && lesson.videoUrl && (
               <div className="mb-6">
-                <span className="text-micro mb-3 block">Watch & Learn</span>
+                <span className="text-micro mb-3 block">{t("lesson.watchLearn")}</span>
                 <div className="aspect-video rounded-2xl overflow-hidden bg-muted border border-border">
                   <iframe
                     src={lesson.videoUrl}
                     className="w-full h-full"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
-                    title={lesson.title}
+                    title={lessonTitle}
                   />
                 </div>
               </div>
             )}
 
-            {/* Reflection */}
             {"reflection" in lesson && (
               <div className="card-ceramic bg-accent/10 border-accent/20 mb-6">
-                <span className="text-micro text-accent-foreground">Reflection</span>
+                <span className="text-micro text-accent-foreground">{t("lesson.reflection")}</span>
                 <p className="text-base text-foreground mt-2 leading-relaxed font-display italic">
-                  {lesson.reflection}
+                  {lessonReflection}
                 </p>
               </div>
             )}
           </div>
         )}
 
-        {/* Complete Button */}
         <div className="mt-8 mb-4">
           {isCompleted ? (
             <div className="w-full p-4 rounded-2xl bg-muted text-center">
-              <span className="text-sm font-medium text-muted-foreground">✓ Completed · +{lesson.xp} XP</span>
+              <span className="text-sm font-medium text-muted-foreground">✓ {t("lesson.completed")} · +{lesson.xp} XP</span>
             </div>
           ) : (
             <button
@@ -157,7 +183,7 @@ const LessonPage = () => {
               disabled={isQuiz && !selectedAnswer}
               className="w-full p-4 rounded-2xl bg-primary text-primary-foreground font-medium text-base transition-all active:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {isQuiz ? "Submit Answer" : "Finish Step"} · +{lesson.xp} XP
+              {isQuiz ? t("lesson.submitAnswer") : t("lesson.finishStep")} · +{lesson.xp} XP
             </button>
           )}
         </div>
