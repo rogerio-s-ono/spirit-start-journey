@@ -14,7 +14,313 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      achievements: {
+        Row: {
+          condition: string
+          description: string
+          icon: string
+          id: string
+          name: string
+        }
+        Insert: {
+          condition: string
+          description: string
+          icon: string
+          id: string
+          name: string
+        }
+        Update: {
+          condition?: string
+          description?: string
+          icon?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      bible_plans: {
+        Row: {
+          chapters: number
+          description: string
+          icon: string
+          id: string
+          name: string
+        }
+        Insert: {
+          chapters: number
+          description: string
+          icon: string
+          id: string
+          name: string
+        }
+        Update: {
+          chapters?: number
+          description?: string
+          icon?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      completed_lessons: {
+        Row: {
+          completed_at: string
+          id: string
+          lesson_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          id?: string
+          lesson_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          id?: string
+          lesson_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "completed_lessons_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_entries: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lessons: {
+        Row: {
+          bible_ref: string | null
+          bible_verse: string | null
+          description: string
+          id: string
+          level_id: number
+          reflection_question: string | null
+          sort_order: number
+          title: string
+          type: string
+          video_url: string | null
+          xp: number
+        }
+        Insert: {
+          bible_ref?: string | null
+          bible_verse?: string | null
+          description: string
+          id: string
+          level_id: number
+          reflection_question?: string | null
+          sort_order: number
+          title: string
+          type?: string
+          video_url?: string | null
+          xp?: number
+        }
+        Update: {
+          bible_ref?: string | null
+          bible_verse?: string | null
+          description?: string
+          id?: string
+          level_id?: number
+          reflection_question?: string | null
+          sort_order?: number
+          title?: string
+          type?: string
+          video_url?: string | null
+          xp?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          current_level: number
+          id: string
+          last_visit: string | null
+          name: string
+          streak: number
+          updated_at: string
+          user_id: string
+          xp_points: number
+        }
+        Insert: {
+          created_at?: string
+          current_level?: number
+          id?: string
+          last_visit?: string | null
+          name?: string
+          streak?: number
+          updated_at?: string
+          user_id: string
+          xp_points?: number
+        }
+        Update: {
+          created_at?: string
+          current_level?: number
+          id?: string
+          last_visit?: string | null
+          name?: string
+          streak?: number
+          updated_at?: string
+          user_id?: string
+          xp_points?: number
+        }
+        Relationships: []
+      }
+      quiz_answers: {
+        Row: {
+          answered_at: string
+          id: string
+          lesson_id: string
+          selected_option: string
+          user_id: string
+        }
+        Insert: {
+          answered_at?: string
+          id?: string
+          lesson_id: string
+          selected_option: string
+          user_id: string
+        }
+        Update: {
+          answered_at?: string
+          id?: string
+          lesson_id?: string
+          selected_option?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_answers_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_options: {
+        Row: {
+          description: string
+          id: string
+          label: string
+          lesson_id: string
+          option_text: string
+          option_type: string
+        }
+        Insert: {
+          description: string
+          id?: string
+          label: string
+          lesson_id: string
+          option_text: string
+          option_type: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          label?: string
+          lesson_id?: string
+          option_text?: string
+          option_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_options_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          date_unlocked: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          date_unlocked?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          date_unlocked?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_reading_progress: {
+        Row: {
+          current_day: number
+          id: string
+          plan_id: string
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          current_day?: number
+          id?: string
+          plan_id: string
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          current_day?: number
+          id?: string
+          plan_id?: string
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_reading_progress_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "bible_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
