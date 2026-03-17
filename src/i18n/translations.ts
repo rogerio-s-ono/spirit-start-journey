@@ -232,6 +232,26 @@ export const translations = {
   "plan.psalms.desc": { pt: "Canções e orações que expressam cada emoção humana diante de Deus.", es: "Canciones y oraciones que expresan cada emoción humana ante Dios.", en: "Songs and prayers that express every human emotion before God." },
   "plan.proverbs.title": { pt: "Provérbios", es: "Proverbios", en: "Proverbs" },
   "plan.proverbs.desc": { pt: "Sabedoria prática para o dia a dia.", es: "Sabiduría práctica para la vida diaria.", en: "Practical wisdom for everyday life." },
+
+  // Auth
+  "auth.welcome": { pt: "Jornada de Fé", es: "Camino de Fe", en: "Faith Journey" },
+  "auth.subtitle": { pt: "Descubra seu caminho espiritual, uma lição de cada vez.", es: "Descubre tu camino espiritual, una lección a la vez.", en: "Discover your spiritual path, one lesson at a time." },
+  "auth.continueGoogle": { pt: "Continuar com Google", es: "Continuar con Google", en: "Continue with Google" },
+  "auth.or": { pt: "ou", es: "o", en: "or" },
+  "auth.loginEmail": { pt: "Entrar com e-mail", es: "Iniciar sesión con email", en: "Sign in with email" },
+  "auth.noAccount": { pt: "Não tem uma conta?", es: "¿No tienes cuenta?", en: "Don't have an account?" },
+  "auth.signUp": { pt: "Criar conta", es: "Crear cuenta", en: "Sign up" },
+  "auth.hasAccount": { pt: "Já tem uma conta?", es: "¿Ya tienes cuenta?", en: "Already have an account?" },
+  "auth.login": { pt: "Entrar", es: "Iniciar sesión", en: "Sign in" },
+  "auth.createAccount": { pt: "Criar conta", es: "Crear cuenta", en: "Create account" },
+  "auth.email": { pt: "E-mail", es: "Correo electrónico", en: "Email" },
+  "auth.password": { pt: "Senha", es: "Contraseña", en: "Password" },
+  "auth.name": { pt: "Nome", es: "Nombre", en: "Name" },
+  "auth.loading": { pt: "Carregando...", es: "Cargando...", en: "Loading..." },
+  "auth.back": { pt: "Voltar", es: "Volver", en: "Back" },
+  "auth.checkEmail": { pt: "Verifique seu e-mail para confirmar sua conta.", es: "Revisa tu correo para confirmar tu cuenta.", en: "Check your email to confirm your account." },
+  "auth.errorGeneric": { pt: "Ocorreu um erro. Tente novamente.", es: "Ocurrió un error. Inténtalo de nuevo.", en: "An error occurred. Please try again." },
+  "auth.logout": { pt: "Sair", es: "Cerrar sesión", en: "Sign out" },
 } as const;
 
 export type TranslationKey = keyof typeof translations;
