@@ -85,7 +85,7 @@ const Profile = () => {
             const badgeTitle = t(`badge.${badge.id}.title` as any);
             const badgeDesc = t(`badge.${badge.id}.desc` as any);
             return (
-              <div key={badge.id} className={`card-ceramic p-4 ${earned ? "" : "opacity-40"}`}>
+              <div key={badge.id} className={`card-celestial p-4 ${earned ? "" : "opacity-40"}`}>
                 <span className="text-2xl block mb-1">{badge.icon}</span>
                 <p className="text-sm font-medium text-foreground">{badgeTitle}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{badgeDesc}</p>
