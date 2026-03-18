@@ -26,7 +26,7 @@ const Profile = () => {
       initial="hidden"
       animate="show"
     >
-      <motion.div variants={fadeInUp} className="card-ceramic text-center mb-6">
+      <motion.div variants={fadeInUp} className="card-celestial text-center mb-6">
         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
           <User className="w-7 h-7 text-primary" />
         </div>
