@@ -82,7 +82,7 @@ const Journal = () => {
           <button
             onClick={handleSubmit}
             disabled={!content.trim()}
-            className="w-full mt-3 p-3 rounded-xl bg-primary text-primary-foreground font-medium text-sm transition-all active:scale-[1.02] disabled:opacity-40"
+            className="w-full mt-3 p-3 rounded-xl bg-primary text-primary-foreground font-medium text-sm transition-all active:scale-[0.98] disabled:opacity-40 glow-gold"
           >
             {t("journal.saveEntry")}
           </button>
