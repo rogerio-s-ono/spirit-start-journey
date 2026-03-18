@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,55 +6,61 @@
 
 @layer base {
   :root {
-    --background: 30 20% 97%;
-    --foreground: 160 10% 20%;
+    --background: 225 25% 8%;
+    --foreground: 40 30% 95%;
 
-    --card: 30 15% 99%;
-    --card-foreground: 160 10% 20%;
+    --card: 225 20% 12%;
+    --card-foreground: 40 30% 95%;
 
-    --popover: 30 15% 99%;
-    --popover-foreground: 160 10% 20%;
+    --popover: 225 20% 12%;
+    --popover-foreground: 40 30% 95%;
 
-    --primary: 180 15% 45%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 38 65% 55%;
+    --primary-foreground: 225 25% 8%;
 
-    --secondary: 85 15% 60%;
-    --secondary-foreground: 160 10% 20%;
+    --secondary: 225 15% 20%;
+    --secondary-foreground: 40 30% 90%;
 
-    --muted: 30 10% 93%;
-    --muted-foreground: 160 5% 50%;
+    --muted: 225 15% 16%;
+    --muted-foreground: 225 10% 55%;
 
-    --accent: 35 30% 65%;
-    --accent-foreground: 160 10% 20%;
+    --accent: 38 50% 45%;
+    --accent-foreground: 40 30% 95%;
 
     --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 160 5% 90%;
-    --input: 160 5% 88%;
-    --ring: 180 15% 45%;
+    --border: 225 15% 18%;
+    --input: 225 15% 20%;
+    --ring: 38 65% 55%;
 
     --radius: 1rem;
 
-    --sidebar-background: 30 15% 96%;
-    --sidebar-foreground: 160 10% 20%;
-    --sidebar-primary: 180 15% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 85 15% 60%;
-    --sidebar-accent-foreground: 160 10% 20%;
-    --sidebar-border: 160 5% 90%;
-    --sidebar-ring: 180 15% 45%;
+    --sidebar-background: 225 20% 10%;
+    --sidebar-foreground: 40 30% 95%;
+    --sidebar-primary: 38 65% 55%;
+    --sidebar-primary-foreground: 225 25% 8%;
+    --sidebar-accent: 38 50% 45%;
+    --sidebar-accent-foreground: 40 30% 95%;
+    --sidebar-border: 225 15% 18%;
+    --sidebar-ring: 38 65% 55%;
 
-    /* Custom tokens */
-    --gold: 35 30% 65%;
-    --gold-foreground: 35 40% 30%;
-    --moss: 85 15% 60%;
-    --moss-foreground: 85 20% 25%;
-    --parchment: 30 20% 97%;
-    --ceramic: 30 15% 99%;
-    --shadow-soft: 0 2px 4px rgba(45, 51, 47, 0.05);
-    --shadow-medium: 0 12px 24px -4px rgba(45, 51, 47, 0.08);
-    --shadow-lifted: 0 20px 40px -8px rgba(45, 51, 47, 0.1);
+    /* Spiritual tokens */
+    --gold: 38 65% 55%;
+    --gold-light: 40 70% 70%;
+    --gold-foreground: 38 80% 25%;
+    --celestial: 225 30% 25%;
+    --celestial-deep: 225 35% 12%;
+    --divine-glow: 38 80% 60%;
+    --heaven: 215 40% 50%;
+
+    --gradient-divine: linear-gradient(135deg, hsl(38 65% 55%) 0%, hsl(30 70% 45%) 100%);
+    --gradient-heaven: linear-gradient(180deg, hsl(225 30% 6%) 0%, hsl(225 25% 14%) 50%, hsl(225 20% 18%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(38 65% 55% / 0.15) 0%, transparent 70%);
+
+    --shadow-divine: 0 0 30px hsl(38 65% 55% / 0.1);
+    --shadow-celestial: 0 8px 32px hsl(225 30% 4% / 0.6);
+    --shadow-lifted: 0 20px 60px hsl(225 30% 4% / 0.5);
   }
 
   * {
@@ -63,6 +69,9 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
+    background-image: var(--gradient-heaven);
+    background-attachment: fixed;
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -71,19 +80,39 @@
 }
 
 @layer utilities {
-  .shadow-soft {
-    box-shadow: var(--shadow-soft);
+  .shadow-divine {
+    box-shadow: var(--shadow-divine);
   }
-  .shadow-medium {
-    box-shadow: var(--shadow-medium);
+  .shadow-celestial {
+    box-shadow: var(--shadow-celestial);
   }
   .shadow-lifted {
     box-shadow: var(--shadow-lifted);
   }
-  .card-ceramic {
-    @apply bg-card rounded-3xl border border-border shadow-medium p-6;
+  .card-celestial {
+    @apply bg-card/80 backdrop-blur-md rounded-2xl border border-border/50 shadow-celestial p-5;
+  }
+  .card-divine {
+    @apply bg-card/60 backdrop-blur-lg rounded-2xl border border-primary/10 shadow-divine p-5;
+    background-image: linear-gradient(135deg, hsl(38 65% 55% / 0.03) 0%, transparent 100%);
   }
   .text-micro {
-    @apply text-xs tracking-[0.08em] uppercase font-medium text-muted-foreground;
+    @apply text-[11px] tracking-[0.12em] uppercase font-medium text-muted-foreground;
+  }
+  .text-gold-gradient {
+    background: linear-gradient(135deg, hsl(40 70% 70%), hsl(38 65% 55%), hsl(30 60% 45%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .glow-gold {
+    box-shadow: 0 0 20px hsl(38 65% 55% / 0.2), 0 0 60px hsl(38 65% 55% / 0.08);
+  }
+  .border-glow {
+    border-color: hsl(38 65% 55% / 0.3);
+  }
+  .divine-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(38 65% 55% / 0.4), transparent);
   }
 }
