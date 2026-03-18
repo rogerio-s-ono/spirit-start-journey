@@ -38,7 +38,7 @@ const LearningPath = () => {
 
         return (
           <motion.div key={level.id} variants={fadeInUp} className="mb-6">
-            <div className={`card-ceramic ${!unlocked ? "opacity-50" : ""}`}>
+            <div className={`card-celestial ${!unlocked ? "opacity-50" : ""}`}>
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-2xl">{level.icon}</span>
                 <div className="flex-1">
