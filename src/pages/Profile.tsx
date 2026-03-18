@@ -109,7 +109,7 @@ const Profile = () => {
             const planDesc = t(`plan.${plan.id}.desc` as any);
 
             return (
-              <div key={plan.id} className="card-ceramic">
+              <div key={plan.id} className="card-celestial">
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">{plan.icon}</span>
                   <div className="flex-1">

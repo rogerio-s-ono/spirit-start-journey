@@ -71,7 +71,7 @@ const LearningPath = () => {
                       <button
                         key={lesson.id}
                         onClick={() => navigate(`/lesson/${lesson.id}`)}
-                        className="w-full flex items-center gap-3 p-3 rounded-xl bg-background border border-border hover:border-primary/30 transition-all text-left active:scale-[1.02]"
+                        className="w-full flex items-center gap-3 p-3 rounded-xl bg-card/40 backdrop-blur-sm border border-border/30 hover:border-primary/30 transition-all text-left active:scale-[0.98]"
                       >
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${completed ? "bg-primary" : "bg-muted"}`}>
                           {completed ? (

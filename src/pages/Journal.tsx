@@ -98,7 +98,7 @@ const Journal = () => {
       ) : (
         <div className="space-y-3">
           {progress.journalEntries.map((entry) => (
-            <motion.div key={entry.id} variants={fadeInUp} className={`card-ceramic ${typeColors[entry.type]}`}>
+            <motion.div key={entry.id} variants={fadeInUp} className={`card-celestial ${typeColors[entry.type]}`}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-micro">{typeLabels[entry.type]}</span>
                 <span className="text-xs text-muted-foreground">
