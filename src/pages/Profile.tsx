@@ -21,7 +21,7 @@ const Profile = () => {
 
   return (
     <motion.div
-      className="min-h-screen bg-background pb-24 px-5 pt-12 max-w-lg mx-auto"
+      className="min-h-screen pb-24 px-5 pt-12 max-w-lg mx-auto"
       variants={staggerContainer}
       initial="hidden"
       animate="show"
