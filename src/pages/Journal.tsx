@@ -77,7 +77,7 @@ const Journal = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={placeholders[entryType]}
-            className="w-full h-32 p-4 rounded-xl bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all font-body leading-relaxed"
+            className="w-full h-32 p-4 rounded-xl bg-card/50 border border-border/50 backdrop-blur-sm text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all font-body leading-relaxed"
           />
           <button
             onClick={handleSubmit}
