@@ -57,7 +57,7 @@ const Journal = () => {
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
-          className="card-ceramic mb-6"
+          className="card-celestial mb-6"
         >
           <span className="text-micro mb-3 block">{t("journal.newEntry")}</span>
           <div className="flex gap-2 mb-4">
