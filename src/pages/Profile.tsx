@@ -21,12 +21,12 @@ const Profile = () => {
 
   return (
     <motion.div
-      className="min-h-screen bg-background pb-24 px-5 pt-12 max-w-lg mx-auto"
+      className="min-h-screen pb-24 px-5 pt-12 max-w-lg mx-auto"
       variants={staggerContainer}
       initial="hidden"
       animate="show"
     >
-      <motion.div variants={fadeInUp} className="card-ceramic text-center mb-6">
+      <motion.div variants={fadeInUp} className="card-celestial text-center mb-6">
         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
           <User className="w-7 h-7 text-primary" />
         </div>
@@ -85,7 +85,7 @@ const Profile = () => {
             const badgeTitle = t(`badge.${badge.id}.title` as any);
             const badgeDesc = t(`badge.${badge.id}.desc` as any);
             return (
-              <div key={badge.id} className={`card-ceramic p-4 ${earned ? "" : "opacity-40"}`}>
+              <div key={badge.id} className={`card-celestial p-4 ${earned ? "" : "opacity-40"}`}>
                 <span className="text-2xl block mb-1">{badge.icon}</span>
                 <p className="text-sm font-medium text-foreground">{badgeTitle}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{badgeDesc}</p>
@@ -109,7 +109,7 @@ const Profile = () => {
             const planDesc = t(`plan.${plan.id}.desc` as any);
 
             return (
-              <div key={plan.id} className="card-ceramic">
+              <div key={plan.id} className="card-celestial">
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">{plan.icon}</span>
                   <div className="flex-1">

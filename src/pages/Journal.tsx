@@ -38,7 +38,7 @@ const Journal = () => {
 
   return (
     <motion.div
-      className="min-h-screen bg-background pb-24 px-5 pt-12 max-w-lg mx-auto"
+      className="min-h-screen pb-24 px-5 pt-12 max-w-lg mx-auto"
       variants={staggerContainer}
       initial="hidden"
       animate="show"
@@ -57,7 +57,7 @@ const Journal = () => {
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
-          className="card-ceramic mb-6"
+          className="card-celestial mb-6"
         >
           <span className="text-micro mb-3 block">{t("journal.newEntry")}</span>
           <div className="flex gap-2 mb-4">
@@ -77,12 +77,12 @@ const Journal = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={placeholders[entryType]}
-            className="w-full h-32 p-4 rounded-xl bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all font-body leading-relaxed"
+            className="w-full h-32 p-4 rounded-xl bg-card/50 border border-border/50 backdrop-blur-sm text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all font-body leading-relaxed"
           />
           <button
             onClick={handleSubmit}
             disabled={!content.trim()}
-            className="w-full mt-3 p-3 rounded-xl bg-primary text-primary-foreground font-medium text-sm transition-all active:scale-[1.02] disabled:opacity-40"
+            className="w-full mt-3 p-3 rounded-xl bg-primary text-primary-foreground font-medium text-sm transition-all active:scale-[0.98] disabled:opacity-40 glow-gold"
           >
             {t("journal.saveEntry")}
           </button>
@@ -98,7 +98,7 @@ const Journal = () => {
       ) : (
         <div className="space-y-3">
           {progress.journalEntries.map((entry) => (
-            <motion.div key={entry.id} variants={fadeInUp} className={`card-ceramic ${typeColors[entry.type]}`}>
+            <motion.div key={entry.id} variants={fadeInUp} className={`card-celestial ${typeColors[entry.type]}`}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-micro">{typeLabels[entry.type]}</span>
                 <span className="text-xs text-muted-foreground">

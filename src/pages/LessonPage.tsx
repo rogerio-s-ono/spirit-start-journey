@@ -26,7 +26,6 @@ const LessonPage = () => {
   const lessonDesc = t(`lesson.${lesson.id}.description` as any);
   const lessonReflection = t(`lesson.${lesson.id}.reflection` as any);
 
-  // Map bible refs to verse translation keys
   const verseKeyMap: Record<string, string> = {
     "John 3:16": "verse.john3:16",
     "Mark 8:36": "verse.mark8:36",
@@ -62,13 +61,13 @@ const LessonPage = () => {
 
   return (
     <motion.div
-      className="min-h-screen bg-background pb-24 max-w-lg mx-auto"
+      className="min-h-screen pb-24 max-w-lg mx-auto"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", duration: 0.5, bounce: 0.1 }}
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border px-5 py-4">
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border/30 px-5 py-4">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="p-1.5 rounded-xl hover:bg-muted transition-colors">
             <ArrowLeft className="w-5 h-5 text-foreground" />
@@ -78,7 +77,7 @@ const LessonPage = () => {
             <p className="text-sm font-medium text-foreground truncate">{lessonTitle}</p>
           </div>
           {isCompleted && (
-            <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center glow-gold">
               <Check className="w-3.5 h-3.5 text-primary-foreground" />
             </div>
           )}
@@ -90,7 +89,7 @@ const LessonPage = () => {
 
         {isQuiz && quiz ? (
           <div>
-            <p className="text-base text-foreground leading-relaxed mb-6">
+            <p className="text-base text-foreground/80 leading-relaxed mb-6">
               {t(`lesson.${lesson.id}.question` as any)}
             </p>
             <div className="space-y-3">
@@ -101,10 +100,10 @@ const LessonPage = () => {
                   <button
                     key={label}
                     onClick={() => handleQuizSelect(label)}
-                    className={`w-full p-4 rounded-2xl border-2 text-left transition-all active:scale-[1.02] ${
+                    className={`w-full p-4 rounded-2xl border text-left transition-all active:scale-[0.98] ${
                       selectedAnswer === label
-                        ? "border-primary bg-primary/5"
-                        : "border-transparent bg-card shadow-soft hover:border-primary/20"
+                        ? "border-primary/50 bg-primary/10 shadow-divine"
+                        : "border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/20"
                     }`}
                   >
                     <div className="flex items-start gap-3">
@@ -135,11 +134,11 @@ const LessonPage = () => {
           </div>
         ) : (
           <div>
-            <p className="text-base text-foreground leading-relaxed mb-6">{lessonDesc}</p>
+            <p className="text-base text-foreground/80 leading-relaxed mb-6">{lessonDesc}</p>
 
             {"bibleVerse" in lesson && lesson.bibleVerse && lesson.bibleRef && (
-              <div className="card-ceramic bg-primary/5 border-primary/10 mb-6">
-                <p className="text-base font-display italic text-foreground leading-relaxed">
+              <div className="card-divine bg-primary/5 border-primary/20 mb-6">
+                <p className="text-lg font-display italic text-foreground/90 leading-relaxed">
                   "{t((verseKeyMap[lesson.bibleRef] || "") as any) || lesson.bibleVerse}"
                 </p>
                 <p className="text-sm text-primary mt-2 font-medium">— {lesson.bibleRef}</p>
@@ -149,7 +148,7 @@ const LessonPage = () => {
             {"videoUrl" in lesson && lesson.videoUrl && (
               <div className="mb-6">
                 <span className="text-micro mb-3 block">{t("lesson.watchLearn")}</span>
-                <div className="aspect-video rounded-2xl overflow-hidden bg-muted border border-border">
+                <div className="aspect-video rounded-2xl overflow-hidden bg-muted border border-border/30">
                   <iframe
                     src={lesson.videoUrl}
                     className="w-full h-full"
@@ -162,9 +161,9 @@ const LessonPage = () => {
             )}
 
             {"reflection" in lesson && (
-              <div className="card-ceramic bg-accent/10 border-accent/20 mb-6">
-                <span className="text-micro text-accent-foreground">{t("lesson.reflection")}</span>
-                <p className="text-base text-foreground mt-2 leading-relaxed font-display italic">
+              <div className="card-celestial border-primary/10 mb-6">
+                <span className="text-micro text-primary">{t("lesson.reflection")}</span>
+                <p className="text-base text-foreground/80 mt-2 leading-relaxed font-display italic">
                   {lessonReflection}
                 </p>
               </div>
@@ -174,14 +173,14 @@ const LessonPage = () => {
 
         <div className="mt-8 mb-4">
           {isCompleted ? (
-            <div className="w-full p-4 rounded-2xl bg-muted text-center">
-              <span className="text-sm font-medium text-muted-foreground">✓ {t("lesson.completed")} · +{lesson.xp} XP</span>
+            <div className="w-full p-4 rounded-2xl bg-primary/10 border border-primary/20 text-center">
+              <span className="text-sm font-medium text-primary">✓ {t("lesson.completed")} · +{lesson.xp} XP</span>
             </div>
           ) : (
             <button
               onClick={handleComplete}
               disabled={isQuiz && !selectedAnswer}
-              className="w-full p-4 rounded-2xl bg-primary text-primary-foreground font-medium text-base transition-all active:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full p-4 rounded-2xl bg-primary text-primary-foreground font-medium text-base transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed glow-gold"
             >
               {isQuiz ? t("lesson.submitAnswer") : t("lesson.finishStep")} · +{lesson.xp} XP
             </button>
