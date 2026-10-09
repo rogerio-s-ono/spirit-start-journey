@@ -125,9 +125,12 @@ src/
 
 ## 5. State Management
 
-### `useProgress()` — user progress (currently localStorage)
+### `useProgress()` — user progress (Supabase-backed, localStorage fallback)
 
-Key: `faithjourney-progress`. Shape:
+Provided once at the app root via **`ProgressProvider`** (a React Context) so
+every page shares a single state instance. Authenticated users load from and
+persist to Supabase; signed-out users fall back to localStorage under the key
+`faithjourney-progress`. Shape:
 
 ```ts
 interface UserProgress {
@@ -148,7 +151,12 @@ Actions: `completeLesson(id, xp)`, `addJournalEntry(type, content)`, `answerQuiz
 
 **Badge logic lives inside the actions** (first lesson, 5 lessons, level completion, first prayer/reflection, reading-plan start). Streak logic runs in the state initializer: same day → keep; yesterday → +1; otherwise → reset to 1.
 
-> ⚠️ **Known gap:** progress is stored in localStorage, not yet synced to the cloud tables (`completed_lessons`, `journal_entries`, `user_achievements`, `user_reading_progress`, `quiz_answers`). The schema exists and is ready — the sync layer is the main pending backend task.
+**Persistence model (important):** each write action updates local state
+**optimistically** and persists to Supabase in the background. The actions do
+**not** re-read the whole state from the DB after each write — the full
+`loadProgress()` runs only on mount / auth change. `currentLevel` is **derived**
+from completed lessons (`deriveCurrentLevel`), not stored. See §12 for the
+rationale and the bugs this avoids.
 
 ### `useLanguage()` — i18n
 
@@ -269,15 +277,91 @@ lucide-react only: `Home`, `Map`, `BookOpen`, `User`, `Star`, `Flame`, `Sparkles
 3. **Lesson ids** are semantic strings (`"2-3"`), shared between `data/lessons.ts`, translation keys, and the DB — keep them in sync.
 4. **Badge awarding** is client-side inside `useProgress` actions; when migrating to DB-backed progress, port this logic (or move it to a server function).
 5. **Streak** uses local `Date.toDateString()` comparisons — timezone-naive by design.
-6. Google OAuth `redirect_uri` must remain `window.location.origin` (same-origin); post-login navigation happens after session hydration.
+6. Auth redirect URLs must be `window.location.origin + import.meta.env.BASE_URL` (NOT origin alone) — the app is served under `/spirit-start-journey/` on GitHub Pages, and origin alone drops the base path. Supabase Auth → URL Configuration must list this URL. See §12.
 7. `noImplicitAny` is off and `strictNullChecks` is off in tsconfig — be careful with the `as any` casts used for dynamic translation keys.
 8. The published app and preview share one backend instance.
 
 ## 11. Roadmap / Pending Work
 
-- [ ] Sync `useProgress` state to cloud tables (completed_lessons, journal_entries, user_achievements, user_reading_progress, quiz_answers) and hydrate from DB on login
+- [x] Sync `useProgress` state to cloud tables and hydrate from DB on login
 - [ ] Read lessons/achievements/plans from DB instead of `data/lessons.ts`
 - [ ] Logout button on Profile
 - [ ] Onboarding flow (name + "what brought you here")
 - [ ] Per-day passages for reading plans (`bible_plan_days` content)
 - [ ] Test coverage for progress/badge logic
+
+## 12. Deployment & Persistence Troubleshooting
+
+Hard-won lessons from getting GitHub Pages + Supabase persistence working.
+Read this before touching deploy, the DB, or `useProgress`.
+
+### GitHub Pages (SPA under a sub-path)
+
+- The app is served at `/spirit-start-journey/`. `vite.config.ts` sets
+  `base: "/spirit-start-journey/"`; the router uses
+  `basename={import.meta.env.BASE_URL}`. Any absolute `/foo` URL (favicon,
+  assets) must instead be relative (`./foo`) or prefixed with `BASE_URL`.
+- **Deep links / refresh:** `public/404.html` + a restore snippet in
+  `index.html` (spa-github-pages technique) map unknown paths back to the SPA.
+- **Pages deploy workflow** needs `permissions: contents: write` so
+  `peaceiris/actions-gh-pages` can push the `gh-pages` branch. The default
+  `GITHUB_TOKEN` is read-only otherwise and the deploy fails silently (~40s).
+- **Stale lazy chunks:** after a deploy, old hashed chunks 404. `lazy()` imports
+  are wrapped in `lazyWithRetry` (`src/lib/lazyWithRetry.ts`), which forces one
+  reload on "Failed to fetch dynamically imported module".
+- Build secrets (`VITE_SUPABASE_*`) are injected at **build time** by the
+  workflow from repo Actions secrets — the `.env` file is NOT used in CI.
+
+### Database — catalog tables MUST be seeded
+
+Every FK into a catalog table requires that table to be populated, or the
+client write is rejected with Postgres error **23503** and rolled back:
+
+| Catalog table | Referenced by | Seed |
+|---------------|---------------|------|
+| `lessons`       | `completed_lessons.lesson_id`, `quiz_answers.lesson_id`, ... | `migrations/..._seed_lessons.sql` |
+| `achievements`  | `user_achievements.achievement_id`                           | `migrations/..._seed_achievements.sql` |
+| `bible_plans`   | `user_reading_progress.plan_id`                              | `migrations/..._seed_bible_plans.sql` |
+
+- Seeds are **generated from `src/data/lessons.ts`** (the source of truth) by
+  `scripts/gen_lessons_seed.mjs` and `scripts/gen_bible_plans_seed.mjs` — never
+  hand-edit; regenerate when the data module changes.
+- Symptoms when a seed is missing: completing a lesson / saving a journal entry
+  / starting a reading plan appears to work, then **does not persist**. Check
+  the browser console for a 23503 FK error naming the missing table.
+
+### Automated migrations
+
+- `.github/workflows/supabase-migrate.yml` runs `supabase db push` on changes to
+  `supabase/migrations/**` (and via **Run workflow**). It `migration repair`s the
+  non-idempotent baseline migration, then verifies the three catalog tables are
+  populated (lessons ≥19, achievements ≥8, bible_plans ≥4) via the Management API.
+- Secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`
+  (`lawtzkhnhnyjtkptrlbs`), `SUPABASE_DB_PASSWORD`.
+- Manual alternative: run `supabase/apply_persistence.sql` in the SQL Editor
+  (idempotent: RLS policies + profile backfill + all three seeds).
+
+### `useProgress` persistence pitfalls (and why the current design)
+
+- **`.single()` → 404.** Reading `profiles` with `.single()` makes PostgREST
+  return HTTP 404 (PGRST116) when the row is absent, logging a console 404 on
+  every reload. Use **`.maybeSingle()`** (returns `null`). The hook also
+  self-heals by inserting a missing `profiles` row.
+- **`.update()` silently writes 0 rows.** A plain `UPDATE` affects nothing if
+  the row is missing or blocked by RLS, with no error. Writes that may target a
+  possibly-missing row use **`upsert(..., { onConflict })`**; reading-plan
+  advance also `.select()`s to warn on 0 rows.
+- **Don't re-read after every write.** Calling `loadProgress()` after each
+  mutation raced with the optimistic local update (and with other in-flight
+  reads), overwriting the just-applied value with a stale DB read — the meter
+  "snapped back" (classic symptom: one click reverts, three fast clicks stick).
+  Writes now update local state optimistically only; `loadProgress()` runs on
+  mount / auth change.
+- **Single shared state.** All pages consume one `ProgressProvider` context; do
+  not call `useProgress()` expecting independent per-page state.
+- **`currentLevel` is derived**, never persisted as the source of truth
+  (`deriveCurrentLevel(completedLessons)`): highest level whose predecessors are
+  fully completed.
+- **XP is owned by the DB trigger** `sync_profile_xp` (adds a lesson's XP on
+  insert into `completed_lessons`). The client must NOT write `xp_points` or it
+  races the trigger.
