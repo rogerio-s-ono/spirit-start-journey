@@ -210,25 +210,72 @@ soft blue
 soft green
 beige
 
-This project was built with [Lovable](https://lovable.dev).
+## Tech Stack
 
-**Live app**: https://spirit-start-journey.lovable.app
+- **Frontend**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Backend**: Supabase (PostgreSQL + Auth)
+- **Animations**: Framer Motion
+- **State Management**: React Hooks
+- **Internationalization**: Custom i18n (PT, ES, EN)
 
-## Build with Lovable
+## Features
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/6438061d-d9f9-4a0b-8fb8-9ff87c6ebb66).
+✅ Google OAuth authentication  
+✅ Email/password authentication  
+✅ Gamified learning path (3 levels, 15+ lessons)  
+✅ Quiz system with spiritual reflection  
+✅ Spiritual journal (prayers, reflections, thoughts)  
+✅ Bible reading plans  
+✅ Achievement system  
+✅ XP and streak tracking  
+✅ Real-time progress sync  
+✅ Responsive mobile-first design  
+✅ Multi-language support (PT, ES, EN)  
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+## Live App
+
+**GitHub Pages**: https://rogerio-s-ono.github.io/spirit-start-journey/
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+git clone https://github.com/rogerio-s-ono/spirit-start-journey.git
+cd spirit-start-journey
+npm install
 npm run dev
 ```
+
+The app will be available at `http://localhost:8080`
+
+## Build for Production
+
+```sh
+npm run build
+```
+
+The production build will be in the `dist/` folder.
+
+## Environment Variables
+
+Create a `.env` file with:
+
+```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_key
+VITE_SUPABASE_PROJECT_ID=your_project_id
+```
+
+## Database Setup
+
+The app uses Supabase for authentication and data persistence. Run the migrations in `supabase/migrations/` to set up the database schema.
+
+## Contributing
+
+This is an open-source project. Feel free to fork, submit issues, and create pull requests.
+
+## License
+
+MIT
