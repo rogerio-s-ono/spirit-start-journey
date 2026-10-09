@@ -1,18 +1,26 @@
 import { motion } from "framer-motion";
 import { useProgress } from "@/hooks/useProgress";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { JourneyNode } from "@/components/JourneyNode";
 import { levels, lessons } from "@/data/lessons";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Flame, Star, ChevronRight, Sparkles } from "lucide-react";
+import { BookOpen, Flame, Star, ChevronRight, Sparkles, LogOut } from "lucide-react";
 import { staggerContainer, fadeInUp } from "@/lib/animations";
+import { Button } from "@/components/ui/button";
 import logoCross from "@/assets/logo-cross.png";
 
 const Dashboard = () => {
   const { progress } = useProgress();
   const { t, language } = useLanguage();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   const currentLevel = levels[progress.currentLevel] || levels[0];
   const levelLessons = lessons.filter((l) => l.levelId === progress.currentLevel);
@@ -48,7 +56,7 @@ const Dashboard = () => {
             <img src={logoCross} alt="Spirit Start" className="w-8 h-8 object-contain" />
             <span className="font-display text-lg font-semibold text-gold-gradient">Spirit Start</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
               <Star className="w-3.5 h-3.5 text-primary" />
               <span className="text-xs font-medium text-primary">{progress.xp}</span>
@@ -58,6 +66,17 @@ const Dashboard = () => {
               <span className="text-xs font-medium text-foreground/80">{progress.streak}</span>
             </div>
             <LanguageSelector />
+            {user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="h-8 w-8 p-0"
+                title={t("auth.logout") || "Logout"}
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
+            )}
           </div>
         </div>
       </motion.header>
