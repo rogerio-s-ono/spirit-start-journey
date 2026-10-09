@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProgress } from "@/hooks/useProgress";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { lessons } from "@/data/lessons";
-import { ArrowLeft, Check } from "lucide-react";
+import { lessons, levels } from "@/data/lessons";
+import { ArrowLeft, Check, ChevronRight } from "lucide-react";
 import type { Quiz } from "@/data/lessons";
 
 const LessonPage = () => {
@@ -57,6 +57,25 @@ const LessonPage = () => {
   const handleQuizSelect = (label: string) => {
     setSelectedAnswer(label);
     setShowResult(true);
+  };
+
+  const getNextLesson = () => {
+    const currentLevelLessons = lessons.filter((l) => l.levelId === lesson.levelId);
+    const currentIndex = currentLevelLessons.findIndex((l) => l.id === lesson.id);
+    
+    if (currentIndex < currentLevelLessons.length - 1) {
+      return currentLevelLessons[currentIndex + 1];
+    }
+    return null;
+  };
+
+  const handleNextLesson = () => {
+    const nextLesson = getNextLesson();
+    if (nextLesson) {
+      navigate(`/lesson/${nextLesson.id}`);
+    } else {
+      navigate("/");
+    }
   };
 
   return (
@@ -171,11 +190,30 @@ const LessonPage = () => {
           </div>
         )}
 
-        <div className="mt-8 mb-4">
+        <div className="mt-8 mb-4 space-y-3">
           {isCompleted ? (
-            <div className="w-full p-4 rounded-2xl bg-primary/10 border border-primary/20 text-center">
-              <span className="text-sm font-medium text-primary">✓ {t("lesson.completed")} · +{lesson.xp} XP</span>
-            </div>
+            <>
+              <div className="w-full p-4 rounded-2xl bg-primary/10 border border-primary/20 text-center">
+                <span className="text-sm font-medium text-primary">✓ {t("lesson.completed")} · +{lesson.xp} XP</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => navigate("/")}
+                  className="p-3 rounded-2xl bg-muted text-foreground font-medium text-sm transition-all active:scale-[0.98] hover:bg-muted/80"
+                >
+                  {t("lesson.backDashboard")}
+                </button>
+                {getNextLesson() && (
+                  <button
+                    onClick={handleNextLesson}
+                    className="p-3 rounded-2xl bg-primary text-primary-foreground font-medium text-sm transition-all active:scale-[0.98] glow-gold flex items-center justify-center gap-2"
+                  >
+                    {t("lesson.nextLesson")}
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </>
           ) : (
             <button
               onClick={handleComplete}

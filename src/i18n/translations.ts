@@ -34,6 +34,8 @@ export const translations = {
   "lesson.submitAnswer": { pt: "Enviar Resposta", es: "Enviar Respuesta", en: "Submit Answer" },
   "lesson.finishStep": { pt: "Concluir Etapa", es: "Completar Paso", en: "Finish Step" },
   "lesson.notFound": { pt: "Lição não encontrada", es: "Lección no encontrada", en: "Lesson not found" },
+  "lesson.backDashboard": { pt: "Voltar", es: "Volver", en: "Back" },
+  "lesson.nextLesson": { pt: "Próxima", es: "Siguiente", en: "Next" },
 
   // Journal
   "journal.title": { pt: "Diário Espiritual", es: "Diario Espiritual", en: "Journal" },
