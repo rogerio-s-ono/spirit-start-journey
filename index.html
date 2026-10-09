@@ -22,6 +22,24 @@
   <meta name="twitter:title" content="Faith Journey — Your Spiritual Path">
   <meta property="og:description" content="A calm, guided spiritual journey for new Christians and seekers. Learn about faith through lessons, reflections, and daily challenges.">
   <meta name="twitter:description" content="A calm, guided spiritual journey for new Christians and seekers. Learn about faith through lessons, reflections, and daily challenges.">
+  <!--
+    Single Page App route restore for GitHub Pages.
+    Decodes the path encoded by 404.html back into a real URL before the
+    router boots, so deep links and refreshes work. Based on
+    rafgraph/spa-github-pages.
+  -->
+  <script type="text/javascript">
+    (function (l) {
+      if (l.search[1] === '/') {
+        var decoded = l.search.slice(1).split('&').map(function (s) {
+          return s.replace(/~and~/g, '&');
+        }).join('?');
+        window.history.replaceState(null, null,
+          l.pathname.slice(0, -1) + decoded + l.hash
+        );
+      }
+    })(window.location);
+  </script>
 </head>
 
   <body>
