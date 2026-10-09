@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spirit Start — Redesign Visual (Céu &amp; Luz)</title>
+<style>
+  :root{
+    --sky-top:#dff0fb;
+    --sky-mid:#eef7fd;
+    --sky-bottom:#fbf8f1;
+    --bg:#f7f9fc;
+    --paper:#ffffff;
+    --ink:#233244;
+    --ink-soft:#5b6b7d;
+    --gold:#c99a42;
+    --gold-soft:#e7c783;
+    --blue:#6fa3d8;
+    --blue-soft:#bcdcf4;
+    --line:#e2e8f0;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    line-height:1.65;
+  }
+  .col{max-width:980px;margin:0 auto;padding:56px 24px 120px;}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;color:var(--ink);font-weight:600;}
+  .kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;}
+  h1{font-size:38px;margin:10px 0 14px;line-height:1.2;}
+  .lede{font-size:18px;color:var(--ink-soft);max-width:680px;}
+  h2{font-size:26px;margin:0 0 6px;}
+  h3{font-size:18px;margin:0 0 8px;color:var(--ink);}
+  .section{margin-top:72px;}
+  .section-intro{color:var(--ink-soft);font-size:16px;max-width:680px;margin-bottom:28px;}
+  p{font-size:16.5px;color:var(--ink-soft);}
+  code{background:#eef2f6;padding:1px 6px;border-radius:5px;font-size:14px;color:var(--ink);}
+
+  /* critique list */
+  .crit{border-left:3px solid #c97a5a;background:#fdf4f0;border-radius:0 12px 12px 0;padding:14px 20px;margin-bottom:10px;}
+  .crit b{color:var(--ink);}
+  .crit p{margin:4px 0 0;color:var(--ink-soft);font-size:15px;}
+
+  /* palette */
+  .swatch-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:20px;}
+  .swatch{width:132px;}
+  .swatch .chip{height:88px;border-radius:14px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);}
+  .swatch .name{font-size:13px;font-weight:600;margin-top:8px;}
+  .swatch .hex{font-size:12px;color:var(--ink-soft);font-family:ui-monospace,Consolas,monospace;}
+
+  /* type specimen */
+  .type-row{display:flex;align-items:baseline;gap:18px;border-bottom:1px solid var(--line);padding:14px 0;}
+  .type-row .tag{width:90px;font-size:12px;color:var(--ink-soft);font-family:ui-monospace,Consolas,monospace;flex-shrink:0;}
+
+  /* phone frames */
+  .phones{display:flex;gap:40px;flex-wrap:wrap;margin-top:28px;align-items:flex-start;}
+  .phone-block{text-align:center;}
+  .phone-label{font-size:13px;color:var(--ink-soft);margin-bottom:10px;font-weight:600;letter-spacing:.03em;}
+  .phone{
+    width:270px;height:560px;border-radius:38px;
+    background:#0d1420;padding:10px;
+    box-shadow:0 30px 60px -20px rgba(30,50,80,.35), 0 0 0 1px rgba(0,0,0,.08);
+    position:relative;
+  }
+  .screen{
+    width:100%;height:100%;border-radius:28px;overflow:hidden;position:relative;
+    display:flex;flex-direction:column;
+  }
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:80px;height:18px;background:#0d1420;border-radius:10px;z-index:5;}
+
+  /* OLD login screen (dark gold, current) */
+  .screen.old-login{
+    background:linear-gradient(180deg,#1a1510 0%,#0f0d0a 55%,#070605 100%);
+    justify-content:center;align-items:center;color:#e7dcc4;
+  }
+  .old-login .content{padding:28px;text-align:center;width:100%;}
+  .old-cross{width:46px;height:46px;margin:0 auto 18px;border:2px solid #c99a42;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:#c99a42;}
+  .old-login h4{font-size:21px;margin:0 0 8px;color:#e9d7a8;font-family:Georgia,serif;}
+  .old-login p.sub{font-size:12.5px;color:#8c8475;margin:0 0 26px;}
+  .old-btn{display:block;width:100%;padding:12px;border-radius:14px;background:#2a241c;color:#cfc5ac;font-size:13px;margin-bottom:10px;border:1px solid #3a3326;}
+  .old-btn.primary{background:#c99a42;color:#1a1510;font-weight:600;border:none;}
+  .old-or{font-size:10px;color:#6b6456;margin:14px 0;letter-spacing:.1em;}
+
+  /* NEW login screen (sky) */
+  .screen.new-login{
+    background:linear-gradient(180deg,#d7ecfb 0%,#eef7fd 38%,#fbf8ee 75%,#fdf6e8 100%);
+    justify-content:flex-end;color:var(--ink);
+  }
+  .cloud{position:absolute;background:#fff;border-radius:50%;opacity:.8;filter:blur(1px);}
+  .sun-glow{position:absolute;top:36px;right:34px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,#ffe9b8 0%,rgba(255,233,184,0) 70%);}
+  .new-login .content{position:relative;z-index:2;padding:26px 24px 30px;background:#fffdf8;border-radius:28px 28px 0 0;box-shadow:0 -10px 30px rgba(90,110,140,.08);}
+  .new-cross{width:52px;height:52px;margin:-54px auto 14px;border-radius:16px;background:linear-gradient(145deg,#fff,#eef4fa);box-shadow:0 10px 20px rgba(90,130,170,.18);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--gold);border:1px solid #eef0f3;}
+  .new-login h4{font-size:22px;margin:0 0 6px;color:var(--ink);font-family:Georgia,serif;}
+  .new-login p.sub{font-size:12.5px;color:var(--ink-soft);margin:0 0 22px;}
+  .new-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:16px;background:#f2f6fa;color:var(--ink);font-size:13.5px;margin-bottom:10px;border:1px solid #e3ebf2;font-weight:500;}
+  .new-btn.primary{background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:#3a2c0f;font-weight:700;border:none;box-shadow:0 8px 18px rgba(201,154,66,.3);}
+  .new-or{font-size:10px;color:#9aa7b4;margin:14px 0;letter-spacing:.1em;text-align:center;}
+  .new-login .divider{display:flex;align-items:center;gap:10px;}
+  .new-login .divider .line{flex:1;height:1px;background:#e5ebf1;}
+
+  /* Dashboard mock */
+  .screen.dash{background:linear-gradient(180deg,#eef7fd 0%,#f8fbfd 30%,#fdf8ee 100%);padding:20px 16px;color:var(--ink);}
+  .dash .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .dash .brand{font-family:Georgia,serif;font-weight:700;font-size:15px;}
+  .dash .pill{font-size:10.5px;background:#fff;border:1px solid #e5ebf1;border-radius:20px;padding:4px 10px;display:inline-flex;gap:4px;align-items:center;color:var(--ink-soft);}
+  .dash .greet{font-size:19px;font-family:Georgia,serif;margin-bottom:4px;}
+  .dash .streakline{font-size:12px;color:var(--ink-soft);margin-bottom:16px;}
+  .dash-card{background:#fff;border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 6px 18px rgba(90,120,150,.06);border:1px solid #eef2f6;}
+  .dash-card .micro{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);font-weight:700;}
+  .dash-card .big{font-size:14px;font-weight:600;margin-top:4px;}
+  .progress-ring{width:58px;height:58px;border-radius:50%;background:conic-gradient(var(--gold) 0% 62%, #e9edf1 62% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .progress-ring .hole{width:44px;height:44px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ink);}
+  .dash-row{display:flex;gap:12px;align-items:center;}
+
+  /* Lesson mock */
+  .screen.lesson{background:#fcfbf7;padding:0;color:var(--ink);}
+  .lesson-head{padding:18px 16px 14px;background:#fff;border-bottom:1px solid #eef1f4;font-size:12px;color:var(--ink-soft);}
+  .lesson-head b{display:block;font-size:15px;color:var(--ink);margin-top:2px;}
+  .lesson-body{padding:16px;font-size:13px;color:var(--ink-soft);}
+  .verse-card{background:linear-gradient(135deg,#fff7e8,#fdeec9);border:1px solid #f1dfab;border-radius:16px;padding:14px;margin:14px 0;font-family:Georgia,serif;font-style:italic;font-size:13.5px;color:#6b5420;}
+  .sky-chip{display:inline-block;background:var(--blue-soft);color:#2f5c82;font-size:10.5px;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+
+  .caption{font-size:13px;color:var(--ink-soft);margin-top:14px;max-width:270px;}
+
+  footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<div class="col">
+
+  <div class="kicker">Spirit Start · Análise de UX Visual</div>
+  <h1>Do dourado escuro para o céu claro</h1>
+  <p class="lede">Avaliação da identidade visual atual, pesquisa de referências de apps de fé/bem-estar, proposta de paleta inspirada em céu/amanhecer e mockups da tela de login e das telas principais.</p>
+
+  <div class="section">
+    <h2>O que está pesando na tela de login atual</h2>
+    <p class="section-intro">A tela (<code>src/pages/Welcome.tsx</code>) usa fundo escuro com imagem de "céu" quase apagada por um gradiente para preto, textos dourados sobre preto e pouquíssimo contraste visual entre os elementos.</p>
+
+    <div class="crit"><b>Fundo que devia ser "céu" mas vira breu.</b><p>A imagem <code>heaven-bg.jpg</code> recebe um overlay de 40-100% para o <code>background</code> escuro — o céu praticamente some, sobra uma tela quase preta.</p></div>
+    <div class="crit"><b>Paleta pesada para o primeiro contato.</b><p>Dourado sobre preto remete a luxo/noturno, não a leveza e acolhimento — é a primeira tela que a pessoa vê, e ela precisa transmitir convite, não solenidade.</p></div>
+    <div class="crit"><b>Hierarquia fraca.</b><p>Botão de Google e botão de e-mail têm o mesmo peso visual que o restante da tela; nada "respira" ou guia o olho para a ação principal.</p></div>
+    <div class="crit"><b>Zero elementos de "céu" reais.</b><p>Sem nuvens, luz, horizonte ou qualquer elemento que remeta visualmente a leveza espiritual — só um brilho dourado difuso.</p></div>
+  </div>
+
+  <div class="section">
+    <h2>Referência de mercado</h2>
+    <p class="section-intro">Pesquisa em apps de fé, meditação e bem-estar (2024-2026) e no padrão de onboarding do Duolingo aponta para a mesma direção:</p>
+    <div class="crit" style="border-left-color:var(--blue);background:#f1f8fd;">
+      <b>Paletas "céu/amanhecer" e neutros naturais vencem o dourado-sobre-preto</b>
+      <p>Tons de azul-céu claro, branco quente e creme transmitem calma e confiança; dourado funciona melhor como <em>acento</em> pontual (CTA, ícone) do que como cor dominante. Contraste mínimo de 4,5:1 entre texto e fundo é o padrão de acessibilidade (WCAG AA) — o app atual, com dourado claro sobre preto, já cumpre isso no escuro, mas perde o "acolhimento" que uma tela clara passa logo de cara.</p>
+    </div>
+    <div class="crit" style="border-left-color:var(--blue);background:#f1f8fd;">
+      <b>Minimalismo com propósito</b>
+      <p>Apps de oração/meditação usam bastante espaço em branco e poucos acentos de cor — o objetivo é "desacelerar" o usuário, não estimular.</p>
+    </div>
+    <div class="crit" style="border-left-color:var(--blue);background:#f1f8fd;">
+      <b>Onboarding tipo Duolingo: ação antes de formulário</b>
+      <p>A entrada por Google deve ser o caminho principal e óbvio; o login por e-mail fica como alternativa secundária, sem competir visualmente.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Paleta proposta — "Amanhecer"</h2>
+    <p class="section-intro">Mantém o dourado como assinatura da marca (logo, CTA principal, badges), mas troca o fundo escuro por um gradiente de céu claro ao amanhecer — luminoso, calmo, ainda assim com presença espiritual.</p>
+    <div class="swatch-row">
+      <div class="swatch"><div class="chip" style="background:#dff0fb"></div><div class="name">Céu claro</div><div class="hex">#DFF0FB</div></div>
+      <div class="swatch"><div class="chip" style="background:#bcdcf4"></div><div class="name">Azul horizonte</div><div class="hex">#BCDCF4</div></div>
+      <div class="swatch"><div class="chip" style="background:#fdf6e8"></div><div class="name">Luz do sol</div><div class="hex">#FDF6E8</div></div>
+      <div class="swatch"><div class="chip" style="background:#c99a42"></div><div class="name">Dourado (acento)</div><div class="hex">#C99A42</div></div>
+      <div class="swatch"><div class="chip" style="background:#233244"></div><div class="name">Tinta (texto)</div><div class="hex">#233244</div></div>
+      <div class="swatch"><div class="chip" style="background:#5b6b7d"></div><div class="name">Texto suave</div><div class="hex">#5B6B7D</div></div>
+      <div class="swatch"><div class="chip" style="background:#ffffff;box-shadow:inset 0 0 0 1px #e2e8f0"></div><div class="name">Cartão</div><div class="hex">#FFFFFF</div></div>
+    </div>
+    <p style="margin-top:16px;font-size:14px;">Regra de uso: <b>60%</b> tons de céu/creme como fundo, <b>30%</b> branco nos cartões/conteúdo, <b>10%</b> dourado só em botões principais, ícones de destaque e conquistas — nunca como cor de fundo grande.</p>
+  </div>
+
+  <div class="section">
+    <h2>Tipografia</h2>
+    <div class="type-row"><span class="tag">display</span><span style="font-family:Georgia,serif;font-size:28px;">Spirit Start</span></div>
+    <div class="type-row"><span class="tag">título</span><span style="font-family:Georgia,serif;font-size:20px;">O Plano da Salvação</span></div>
+    <div class="type-row"><span class="tag">corpo</span><span style="font-size:16px;">O amor de Deus é simples, mas profundo — Ele nos ama, e Jesus pagou o preço por nós.</span></div>
+    <div class="type-row"><span class="tag">legenda</span><span style="font-size:12.5px;color:var(--ink-soft);">João 3:16 · 25 XP</span></div>
+    <p style="margin-top:14px;">Mantém a combinação serifada (display, para títulos com peso emocional) + sem serifa (corpo, para leitura confortável) já usada no app — só muda a cor de fundo ao redor dela.</p>
+  </div>
+
+  <div class="section">
+    <h2>Mockup — Login: antes e depois</h2>
+    <p class="section-intro">O fluxo continua igual (Google em destaque, e-mail como alternativa) — a mudança é inteiramente visual.</p>
+    <div class="phones">
+      <div class="phone-block">
+        <div class="phone-label">Atual</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen old-login">
+            <div class="content">
+              <div class="old-cross">✝</div>
+              <h4>Spirit Start</h4>
+              <p class="sub">sua jornada de fé começa aqui</p>
+              <div class="old-btn">🔍 Continuar com Google</div>
+              <div class="old-or">— OU —</div>
+              <div class="old-btn primary">✉ Entrar com e-mail</div>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Fundo quase preto, dourado como cor dominante, pouco "ar" entre os elementos.</p>
+      </div>
+
+      <div class="phone-block">
+        <div class="phone-label">Proposta — Amanhecer</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen new-login">
+            <div class="sun-glow"></div>
+            <div class="cloud" style="width:90px;height:28px;top:70px;left:-10px;"></div>
+            <div class="cloud" style="width:60px;height:20px;top:95px;left:50px;"></div>
+            <div class="cloud" style="width:70px;height:22px;top:130px;left:160px;"></div>
+            <div class="content">
+              <div class="new-cross">✝</div>
+              <h4 style="text-align:center;">Spirit Start</h4>
+              <p class="sub" style="text-align:center;">um novo amanhecer para sua fé</p>
+              <div class="new-btn primary">🔍 Continuar com Google</div>
+              <div class="divider"><span class="line"></span><span class="new-or">ou</span><span class="line"></span></div>
+              <div class="new-btn">✉ Entrar com e-mail</div>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Céu real com nuvens e luz, cartão branco "pousando" por cima, dourado só no botão principal.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Mockup — Dashboard e Lição, no mesmo céu</h2>
+    <p class="section-intro">A paleta clara se estende às telas internas para manter consistência — hoje elas já são escuras com dourado, então é a mesma mudança de fundo aplicada ao restante do app.</p>
+    <div class="phones">
+      <div class="phone-block">
+        <div class="phone-label">Dashboard</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen dash">
+            <div class="top">
+              <span class="brand">Spirit Start</span>
+              <span class="pill">⭐ 320 · 🔥 5</span>
+            </div>
+            <div class="greet">Bom dia, Rogério</div>
+            <div class="streakline">🔥 5 dias seguidos · 320 XP</div>
+            <div class="dash-card">
+              <div class="dash-row">
+                <div class="progress-ring"><div class="hole">62%</div></div>
+                <div>
+                  <div class="micro">Nível 2 · Hábitos Espirituais</div>
+                  <div class="big">3 de 5 lições concluídas</div>
+                </div>
+              </div>
+            </div>
+            <div class="dash-card">
+              <div class="micro">Próximo passo</div>
+              <div class="big">Criando um Diário Espiritual</div>
+            </div>
+            <div class="dash-card">
+              <div class="micro">Versículo do dia</div>
+              <div class="big" style="font-family:Georgia,serif;font-style:italic;font-weight:400;">"Seja a luz do mundo." — Mateus 5:14</div>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Cartões brancos "flutuando" sobre o céu, anel de progresso dourado como foco visual único.</p>
+      </div>
+
+      <div class="phone-block">
+        <div class="phone-label">Lição</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen lesson">
+            <div class="lesson-head">
+              Lição
+              <b>Como Orar</b>
+            </div>
+            <div class="lesson-body">
+              <span class="sky-chip">Nível 2 · Hábitos Espirituais</span>
+              <p>Orar é simplesmente conversar com Deus. Não existe fórmula perfeita — apenas honestidade, gratidão e confiança.</p>
+              <div class="verse-card">"Não andem ansiosos por coisa alguma, mas em tudo, pela oração... apresentem seus pedidos a Deus."<br><b style="font-style:normal;">— Filipenses 4:6</b></div>
+              <div class="new-btn primary" style="margin-top:6px;">Concluir · +50 XP</div>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Versículo em destaque com leve dourado, mas fundo e corpo do texto permanecem claros e leves.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Próximos passos sugeridos</h2>
+    <p>Se a direção aprovar: (1) trocar <code>heaven-bg.jpg</code> por uma versão de céu claro/amanhecer com nuvens reais ou gerar uma nova imagem; (2) atualizar os tokens de cor em <code>index.css</code>/<code>tailwind.config</code> (hoje escuros) para a paleta "Amanhecer" acima; (3) aplicar a mesma base clara em Dashboard, Trilha, Diário e Perfil, mantendo o dourado só como acento de ação e conquista — sem precisar redesenhar a estrutura de componentes, só o tema.</p>
+  </div>
+
+  <footer>
+    Spirit Start — Proposta de redesign visual · Paleta e mockups gerados a partir da análise de <code>Welcome.tsx</code> e referências de UX para apps de fé, meditação e bem-estar.
+  </footer>
+
+</div>
+</body>
+</html>
