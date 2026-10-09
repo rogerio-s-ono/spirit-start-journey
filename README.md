@@ -1,73 +1,234 @@
-# Welcome to your Lovable project
+# Faith Path
 
-## Project info
+Create a mobile-first web application called Faith Journey.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+The app helps new Christians or people interested in Jesus understand the Gospel and develop spiritual habits.
 
-## How can I edit this code?
+The target audience are people who:
 
-There are several ways of editing your application.
+are curious about Christianity
 
-**Use Lovable**
+recently converted
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+have little biblical knowledge
 
-Changes made via Lovable will be committed automatically to this repo.
+want guidance on how to live a Christian life
 
-**Use your preferred IDE**
+The app should be simple, welcoming and beginner friendly.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Main concept
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+The app is a gamified spiritual journey where users progress through levels while learning about Christianity.
 
-Follow these steps:
+Users complete:
+
+lessons
+
+reflections
+
+quizzes
+
+small spiritual challenges
+
+Examples:
+
+read a Bible passage
+
+watch a short teaching video
+
+write a reflection
+
+say a short prayer
+
+Progress unlocks new levels and achievements.
+
+Learning Path Structure
+
+Level 0 — Introduction to Christianity
+
+Goal: help users reflect about life and spiritual values.
+
+Lessons:
+
+1 What does it mean to be a Christian today
+2 Material success vs spiritual purpose
+3 What people truly seek in life
+4 Reflection quiz: "What do you really want for your life?"
+
+The quiz should present three attractive choices:
+
+A – spiritual values
+B – balanced lifestyle
+C – pleasure, success and personal ambition
+
+All answers should have some appealing benefit, but reflect different priorities.
+
+Level 1 — First Steps in Faith
+
+Lessons:
+
+The plan of salvation
+
+Who Jesus is
+
+What sin means
+
+What it means to be born again
+
+Beginning a relationship with God
+
+Each lesson should include:
+
+simple explanation
+
+Bible verses
+
+reflection question
+
+optional embedded YouTube video
+
+Level 2 — Spiritual Habits
+
+Lessons:
+
+How to pray
+
+How to read the Bible
+
+Understanding Scripture
+
+Creating a spiritual journal
+
+Listening to God
+
+Level 3 — Living the Christian Life
+
+Lessons:
+
+Facing temptation
+
+Faith in everyday life
+
+Family and faith
+
+Christian community
+
+Sharing your faith
+
+App Features
+
+The app must include:
+
+Dashboard
+Learning path
+Daily challenge
+Quiz system
+Spiritual journal
+Bible reading plans
+Achievements system
+
+Dashboard
+
+Show:
+
+current level
+
+progress bar
+
+daily challenge
+
+verse of the day
+
+Content Lessons
+
+Each lesson page should include:
+
+Title
+Short explanation
+Bible verse
+Embedded YouTube video
+Reflection question
+Completion button
+
+Quiz Pages
+
+Multiple choice questions with 3 options.
+
+Each option reflects a different life priority.
+
+Spiritual Journal
+
+Users can write:
+
+prayers
+
+reflections
+
+thoughts about lessons
+
+Entries should be stored in the user account.
+
+Bible Reading Plans
+
+Suggested reading plans:
+
+Gospel of John
+
+Gospel of Mark
+
+Psalms
+
+Proverbs
+
+Gamification
+
+Include:
+
+Levels
+XP points
+Badges
+Streaks
+
+Example badges:
+
+First Prayer
+First Week Reading the Bible
+Reflection Completed
+
+Design Style
+
+The design should feel:
+
+calm
+modern
+minimalist
+welcoming
+
+Colors:
+
+soft blue
+soft green
+beige
+
+This project was built with [Lovable](https://lovable.dev).
+
+**Live app**: https://spirit-start-journey.lovable.app
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/6438061d-d9f9-4a0b-8fb8-9ff87c6ebb66).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
