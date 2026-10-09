@@ -133,53 +133,7 @@ export function useProgress() {
             userName: profile?.name || "",
           });
 
-          // Subscribe to real-time updates on profile
-          const profileSubscription = supabase
-            .channel(`profile:${user.id}`)
-            .on(
-              "postgres_changes",
-              {
-                event: "*",
-                schema: "public",
-                table: "profiles",
-                filter: `user_id=eq.${user.id}`,
-              },
-              (payload) => {
-                setProgress((prev) => ({
-                  ...prev,
-                  xp: payload.new?.xp_points || prev.xp,
-                  currentLevel: payload.new?.current_level || prev.currentLevel,
-                  streak: payload.new?.streak || prev.streak,
-                  userName: payload.new?.name || prev.userName,
-                }));
-              }
-            )
-            .subscribe();
 
-          // Subscribe to real-time updates on completed lessons
-          const lessonsSubscription = supabase
-            .channel(`lessons:${user.id}`)
-            .on(
-              "postgres_changes",
-              {
-                event: "INSERT",
-                schema: "public",
-                table: "completed_lessons",
-                filter: `user_id=eq.${user.id}`,
-              },
-              (payload) => {
-                setProgress((prev) => ({
-                  ...prev,
-                  completedLessons: [...prev.completedLessons, payload.new.lesson_id],
-                }));
-              }
-            )
-            .subscribe();
-
-          return () => {
-            profileSubscription.unsubscribe();
-            lessonsSubscription.unsubscribe();
-          };
         } else {
           // Load from localStorage (fallback for non-authenticated users)
           const stored = localStorage.getItem("faithjourney-progress");
