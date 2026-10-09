@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spirit Start — Plan vs. Built: Gap Analysis</title>
+<style>
+  :root{
+    --bg:#faf9f6; --bg-panel:#ffffff; --text:#1c1a16; --text-dim:#5c584f;
+    --border:#e4e0d6; --accent:#a3792f; --accent-soft:#f3e6cc;
+    --ok:#2f6d4f; --ok-soft:#e6f0ea; --bad:#a33a2f; --bad-soft:#f6e6e2; --warn:#a3792f; --warn-soft:#f3e6cc;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#15140f; --bg-panel:#1c1a15; --text:#f2ede1; --text-dim:#a79f8c;
+      --border:#34301f; --accent:#d9a84e; --accent-soft:#2c2415;
+      --ok:#7fc29e; --ok-soft:#1b2a21; --bad:#e2887a; --bad-soft:#2e1d19; --warn:#d9a84e; --warn-soft:#2c2415;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15140f; --bg-panel:#1c1a15; --text:#f2ede1; --text-dim:#a79f8c;
+    --border:#34301f; --accent:#d9a84e; --accent-soft:#2c2415;
+    --ok:#7fc29e; --ok-soft:#1b2a21; --bad:#e2887a; --bad-soft:#2e1d19; --warn:#d9a84e; --warn-soft:#2c2415;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:56px 24px 120px; }
+  .eyebrow{ font-family:var(--mono); font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 10px; }
+  h1{ font-size:38px; margin:0 0 14px; letter-spacing:-.01em; }
+  .lede{ font-size:18px; color:var(--text-dim); max-width:740px; margin:0; }
+  h2{ font-size:24px; margin:0 0 6px; letter-spacing:-.01em; }
+  section{ margin-top:60px; }
+  .section-sub{ color:var(--text-dim); font-size:15px; margin:0 0 24px; max-width:700px; }
+
+  .stat-row{ display:flex; gap:16px; flex-wrap:wrap; margin-top:28px; }
+  .stat{ border:1px solid var(--border); border-radius:10px; padding:16px 20px; background:var(--bg-panel); min-width:150px; flex:1; }
+  .stat .n{ font-size:30px; font-weight:600; }
+  .stat .l{ font-size:12.5px; color:var(--text-dim); font-family:var(--mono); text-transform:uppercase; letter-spacing:.04em; margin-top:2px; }
+  .stat.ok .n{ color:var(--ok); }
+  .stat.bad .n{ color:var(--bad); }
+  .stat.warn .n{ color:var(--warn); }
+
+  table{ width:100%; border-collapse:collapse; font-size:14.5px; }
+  th,td{ text-align:left; padding:11px 14px; border-bottom:1px solid var(--border); vertical-align:top; }
+  th{ font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-dim); font-weight:600; }
+  .table-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius:10px; background:var(--bg-panel); }
+  .table-wrap table{ margin:0; }
+  .table-wrap th:first-child, .table-wrap td:first-child{ padding-left:16px; }
+  code{ font-family:var(--mono); font-size:12.5px; background:var(--accent-soft); padding:1px 6px; border-radius:4px; }
+
+  .status{ display:inline-block; padding:2px 9px; border-radius:999px; font-size:11.5px; font-family:var(--mono); white-space:nowrap; }
+  .status.ok{ background:var(--ok-soft); color:var(--ok); }
+  .status.bad{ background:var(--bad-soft); color:var(--bad); }
+  .status.warn{ background:var(--warn-soft); color:var(--warn); }
+  .status.partial{ background:var(--warn-soft); color:var(--warn); }
+
+  .finding{ border:1px solid var(--border); border-left:3px solid var(--bad); border-radius:8px; padding:16px 20px; background:var(--bg-panel); margin-bottom:14px; }
+  .finding.warn{ border-left-color:var(--warn); }
+  .finding.minor{ border-left-color:var(--text-dim); }
+  .finding h3{ margin:0 0 6px; font-size:16px; display:flex; align-items:center; gap:10px; }
+  .finding p{ margin:0 0 6px; font-size:14.5px; color:var(--text-dim); }
+  .finding .loc{ font-family:var(--mono); font-size:12px; color:var(--text-dim); }
+
+  footer{ margin-top:80px; padding-top:20px; border-top:1px solid var(--border); color:var(--text-dim); font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Spirit Start — Step 2 of 3</p>
+    <h1>Plan vs. Built: Gap Analysis</h1>
+    <p class="lede">What <code>TECHNICAL_DOCS.md</code> and the app map describe vs. what the source code in <code>src/</code> actually does, verified by reading every page, hook, and the data file directly (commit <code>bd9b0de</code>, branch <code>main</code>).</p>
+
+    <div class="stat-row">
+      <div class="stat ok"><div class="n">7 / 7</div><div class="l">screens exist as documented</div></div>
+      <div class="stat bad"><div class="n">0</div><div class="l">DB writes for progress (all local only)</div></div>
+      <div class="stat bad"><div class="n">1</div><div class="l">confirmed state bug (current level)</div></div>
+      <div class="stat warn"><div class="n">1 / 8</div><div class="l">badges that can never be earned</div></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Screen-by-screen match</h2>
+    <p class="section-sub">Every documented route exists and renders what the docs claim. No screen is missing.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Screen</th><th>Match to docs</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>Welcome</td><td><span class="status ok">matches</span></td><td>Google OAuth + email login/signup, language selector, exactly as documented</td></tr>
+          <tr><td>Dashboard</td><td><span class="status partial">partial</span></td><td>All documented widgets present, but level shown is wrong — see Finding 1</td></tr>
+          <tr><td>LearningPath</td><td><span class="status ok">matches</span></td><td>Sequential unlock logic correctly checks previous level's lesson completion</td></tr>
+          <tr><td>LessonPage</td><td><span class="status ok">matches</span></td><td>Lesson + quiz content render from <code>data/lessons.ts</code> as documented</td></tr>
+          <tr><td>Journal</td><td><span class="status ok">matches</span></td><td>Create/list for prayer, reflection, thought entries</td></tr>
+          <tr><td>Profile</td><td><span class="status partial">partial</span></td><td>Stats, badges, reading plans all present; logout button still missing (documented as pending)</td></tr>
+          <tr><td>NotFound</td><td><span class="status ok">matches</span></td><td>Catch-all route</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Confirmed findings</h2>
+    <p class="section-sub">Issues found by reading the actual code, not assumptions. Ordered most to least severe.</p>
+
+    <div class="finding">
+      <h3>1. Dashboard always shows Level 0, even after it's finished <span class="status bad">bug</span></h3>
+      <p><code>Dashboard.tsx</code> reads <code>progress.currentLevel</code> to pick which level's title, progress ring, and "next lesson" CTA to show. But <code>useProgress.ts</code> never updates <code>currentLevel</code> anywhere — it's set once at init and <code>completeLesson()</code> never advances it. A user who finishes all of Level 0 and unlocks Level 1 will still see the Dashboard pointing at Level 0 lessons; the only way to reach Level 1 content is via the Learning Path tab.</p>
+      <p class="loc">src/hooks/useProgress.ts — completeLesson() · src/pages/Dashboard.tsx:16</p>
+    </div>
+
+    <div class="finding warn">
+      <h3>2. One badge can never be earned <span class="status warn">dead logic</span></h3>
+      <p>The "7-Day Journey" badge (<code>week-streak</code>, awarded at a 7-day streak) is defined in <code>data/lessons.ts</code> and shown on the Profile page, but no code path ever adds <code>week-streak</code> to <code>earnedBadges</code>. Streak increments happen in the <code>useProgress</code> initializer, with no badge check attached. Of 8 total badges, this one is permanently stuck at "not earned."</p>
+      <p class="loc">src/data/lessons.ts — badges[] · src/hooks/useProgress.ts (no streak-badge check exists)</p>
+    </div>
+
+    <div class="finding warn">
+      <h3>3. Badge logic is hardcoded to levels 0–1 only <span class="status warn">scalability gap</span></h3>
+      <p><code>completeLesson()</code> hardcodes the lesson-id arrays for level 0 (<code>level0Lessons</code>) and level 1 (<code>level1Lessons</code>) to award the <code>level-1</code>/<code>level-2</code> badges. Finishing Level 2 or Level 3 triggers no badge at all — not because none is designed (the data file only defines 2 level badges by design), but because any future level badge would require another hand-written array rather than deriving from <code>levels</code>/<code>lessons</code> data.</p>
+      <p class="loc">src/hooks/useProgress.ts — completeLesson()</p>
+    </div>
+
+    <div class="finding">
+      <h3>4. Cloud sync is not partially done — it's 0% done <span class="status bad">confirmed via code search</span></h3>
+      <p>A repo-wide search for <code>supabase.from(</code> returns zero results outside auth. Every one of <code>completed_lessons</code>, <code>journal_entries</code>, <code>user_achievements</code>, <code>user_reading_progress</code>, <code>quiz_answers</code>, <code>lessons</code>, <code>achievements</code>, <code>bible_plans</code> is unused by the frontend. This matches what the docs already flagged as a known gap — confirming it is accurate and total, not partially mitigated somewhere else in the code.</p>
+      <p class="loc">repo-wide search: supabase\.(from|auth) — only auth.* calls found</p>
+    </div>
+
+    <div class="finding minor">
+      <h3>5. Orphaned scaffold page <span class="status ok">cleanup, no user impact</span></h3>
+      <p><code>src/pages/Index.tsx</code> is the default Lovable/Vite "Blank App" placeholder page. It is not imported by <code>App.tsx</code> and not reachable by any route — dead code left over from project scaffolding.</p>
+      <p class="loc">src/pages/Index.tsx</p>
+    </div>
+
+    <div class="finding minor">
+      <h3>6. <code>requiredXp</code> on each level is unused <span class="status ok">cleanup, no user impact</span></h3>
+      <p>Each entry in <code>levels[]</code> carries a <code>requiredXp</code> field (100/200/250/300), but level unlocking in <code>LearningPath.tsx</code> is based entirely on lesson completion, never on XP. The field is inert — either remove it or decide XP-gating is a real future rule and wire it in.</p>
+      <p class="loc">src/data/lessons.ts — levels[].requiredXp · src/pages/LearningPath.tsx — isLevelUnlocked()</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What's solid</h2>
+    <p class="section-sub">Confirmed working exactly as documented, no changes needed.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Area</th><th>Verified behavior</th></tr></thead>
+        <tbody>
+          <tr><td>Routing &amp; auth guard</td><td><code>ProtectedRoute</code> correctly redirects anonymous users to <code>/welcome</code>; authenticated users skip Welcome</td></tr>
+          <tr><td>Level unlock rule</td><td><code>LearningPath.tsx</code> correctly requires every lesson of level N−1 complete before N unlocks</td></tr>
+          <tr><td>i18n</td><td><code>useLanguage()</code>/<code>translations.ts</code> wired consistently across every page via <code>t()</code></td></tr>
+          <tr><td>Journal + reading plans</td><td>CRUD and chapter-advance actions in <code>useProgress</code> work as documented, badges for first prayer/reflection/reading-plan fire correctly</td></tr>
+          <tr><td>19 lessons, 4 levels, 4 reading plans, 8 badges</td><td>Content counts in <code>data/lessons.ts</code> match the docs exactly</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    Verified by direct source read of src/App.tsx, src/hooks/useProgress.ts, src/hooks/useAuth.ts, src/pages/*.tsx, src/data/lessons.ts — commit bd9b0de · Step 2 of 3 — next: sprint plan and backlog from these findings plus the roadmap already in TECHNICAL_DOCS.md.
+  </footer>
+
+</div>
+</body>
+</html>

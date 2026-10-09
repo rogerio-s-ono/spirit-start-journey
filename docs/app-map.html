@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spirit Start — App Map &amp; UX Flow</title>
+<style>
+  :root{
+    --bg:#faf9f6;
+    --bg-panel:#ffffff;
+    --text:#1c1a16;
+    --text-dim:#5c584f;
+    --border:#e4e0d6;
+    --accent:#a3792f;
+    --accent-soft:#f3e6cc;
+    --node-bg:#ffffff;
+    --node-border:#d8d2c2;
+    --locked:#ece9e1;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#15140f;
+      --bg-panel:#1c1a15;
+      --text:#f2ede1;
+      --text-dim:#a79f8c;
+      --border:#34301f;
+      --accent:#d9a84e;
+      --accent-soft:#2c2415;
+      --node-bg:#1f1c15;
+      --node-border:#3a3524;
+      --locked:#262319;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15140f;
+    --bg-panel:#1c1a15;
+    --text:#f2ede1;
+    --text-dim:#a79f8c;
+    --border:#34301f;
+    --accent:#d9a84e;
+    --accent-soft:#2c2415;
+    --node-bg:#1f1c15;
+    --node-border:#3a3524;
+    --locked:#262319;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;
+  }
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:56px 24px 120px;
+  }
+  header.page{
+    margin-bottom:48px;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 10px;
+  }
+  h1{
+    font-size:38px;
+    margin:0 0 14px;
+    letter-spacing:-.01em;
+  }
+  .lede{
+    font-size:18px;
+    color:var(--text-dim);
+    max-width:720px;
+    margin:0;
+  }
+  h2{
+    font-size:24px;
+    margin:0 0 6px;
+    letter-spacing:-.01em;
+  }
+  h3{
+    font-size:16px;
+    margin:0 0 8px;
+  }
+  section{
+    margin-top:64px;
+  }
+  .section-sub{
+    color:var(--text-dim);
+    font-size:15px;
+    margin:0 0 28px;
+    max-width:680px;
+  }
+
+  /* ---- Flow diagram ---- */
+  .flow{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+  }
+  .flow-row{
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+    gap:28px;
+    flex-wrap:wrap;
+    position:relative;
+  }
+  .node{
+    background:var(--node-bg);
+    border:1px solid var(--node-border);
+    border-radius:10px;
+    padding:14px 18px;
+    min-width:150px;
+    max-width:220px;
+    text-align:center;
+    font-size:14.5px;
+    position:relative;
+  }
+  .node .t{
+    font-weight:600;
+    display:block;
+    margin-bottom:3px;
+  }
+  .node .d{
+    color:var(--text-dim);
+    font-size:12.5px;
+    display:block;
+  }
+  .node.entry{ border-color:var(--accent); background:var(--accent-soft); }
+  .node.gate{ border-style:dashed; }
+  .node.protected::after{
+    content:"🔒 auth required";
+    display:block;
+    font-size:10.5px;
+    color:var(--accent);
+    margin-top:6px;
+    font-family:var(--mono);
+  }
+  .arrow-down{
+    display:flex;
+    justify-content:center;
+    color:var(--text-dim);
+    font-size:20px;
+    margin:4px 0;
+    opacity:.55;
+  }
+  .branch-label{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-dim);
+    text-align:center;
+    margin-bottom:-2px;
+  }
+  .hub-row{
+    display:flex;
+    justify-content:center;
+    gap:28px;
+    flex-wrap:wrap;
+    margin-top:8px;
+  }
+
+  /* ---- screen inventory ---- */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14.5px;
+  }
+  th,td{
+    text-align:left;
+    padding:10px 14px;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  th{
+    font-family:var(--mono);
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--text-dim);
+    font-weight:600;
+  }
+  td code, .inline-code{
+    font-family:var(--mono);
+    font-size:13px;
+    background:var(--accent-soft);
+    padding:1px 6px;
+    border-radius:4px;
+  }
+  .table-wrap{
+    overflow-x:auto;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--bg-panel);
+  }
+  .table-wrap table{ margin:0; }
+  .table-wrap th:first-child, .table-wrap td:first-child{ padding-left:16px; }
+
+  /* ---- data flow ---- */
+  .dataflow{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+  }
+  @media (max-width:720px){ .dataflow{ grid-template-columns:1fr; } }
+  .panel{
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:20px 22px;
+    background:var(--bg-panel);
+  }
+  .panel ul{
+    margin:0;
+    padding-left:18px;
+    font-size:14.5px;
+    color:var(--text-dim);
+  }
+  .panel li{ margin-bottom:6px; }
+  .panel li code{ font-family:var(--mono); font-size:12.5px; background:var(--accent-soft); padding:1px 5px; border-radius:4px; color:var(--text); }
+  .pill{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:11px;
+    padding:2px 8px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    margin-left:8px;
+  }
+  .pill.gap{ border-color:var(--accent); color:var(--accent); }
+
+  footer{
+    margin-top:80px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
+    color:var(--text-dim);
+    font-size:13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <p class="eyebrow">Spirit Start — Step 1 of 3</p>
+    <h1>App Map &amp; UX Flow</h1>
+    <p class="lede">A recap of the product as currently designed: the full screen map, the navigation flow, and how state moves between the UI, local storage, and the cloud backend. Built from <code class="inline-code">TECHNICAL_DOCS.md</code> as of commit <code class="inline-code">bd9b0de</code>.</p>
+  </header>
+
+  <section>
+    <h2>Navigation flow</h2>
+    <p class="section-sub">Every screen a user can reach, in order, with the routes and guard conditions from <code class="inline-code">App.tsx</code>.</p>
+
+    <div class="flow">
+      <div class="flow-row">
+        <div class="node entry">
+          <span class="t">Welcome</span>
+          <span class="d">/welcome · login + signup<br>Google OAuth or email</span>
+        </div>
+      </div>
+      <div class="arrow-down">↓</div>
+      <div class="flow-row">
+        <div class="node gate">
+          <span class="t">Auth gate</span>
+          <span class="d">ProtectedRoute waits for session,<br>redirects anonymous users back</span>
+        </div>
+      </div>
+      <div class="arrow-down">↓</div>
+      <div class="flow-row">
+        <div class="node entry protected">
+          <span class="t">Dashboard</span>
+          <span class="d">/ · level, progress ring, daily<br>challenge, verse of the day, CTA</span>
+        </div>
+      </div>
+      <div class="arrow-down">↓</div>
+      <div class="branch-label">BottomNav — 4 tabs, always visible once authenticated</div>
+      <div class="hub-row">
+        <div class="node protected">
+          <span class="t">Home</span>
+          <span class="d">Dashboard</span>
+        </div>
+        <div class="node protected">
+          <span class="t">Learning Path</span>
+          <span class="d">/path · level cards,<br>locked/unlocked states</span>
+        </div>
+        <div class="node protected">
+          <span class="t">Journal</span>
+          <span class="d">/journal · create/read<br>prayer · reflection · thought</span>
+        </div>
+        <div class="node protected">
+          <span class="t">Profile</span>
+          <span class="d">/profile · stats, badges,<br>reading plans, name</span>
+        </div>
+      </div>
+      <div class="arrow-down">↓</div>
+      <div class="branch-label">from a Learning Path level card</div>
+      <div class="flow-row">
+        <div class="node protected">
+          <span class="t">Lesson page</span>
+          <span class="d">/lesson/:id · explanation, verse,<br>optional video, reflection, complete</span>
+        </div>
+        <div class="node protected">
+          <span class="t">Quiz</span>
+          <span class="d">embedded in lesson flow · 3 options,<br>spiritual / balanced / worldly, no wrong answer</span>
+        </div>
+      </div>
+      <div class="arrow-down">↓</div>
+      <div class="flow-row">
+        <div class="node">
+          <span class="t">Any unmatched route</span>
+          <span class="d">NotFound</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Screen inventory</h2>
+    <p class="section-sub">Every page component, its route, guard, and primary purpose.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Screen</th><th>Route</th><th>Guard</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Welcome</td><td><code>/welcome</code></td><td>redirects to <code>/</code> if logged in</td><td>Landing, Google + email login/signup</td></tr>
+          <tr><td>Dashboard</td><td><code>/</code></td><td>protected</td><td>Home: level, progress ring, daily challenge, verse, recent journal</td></tr>
+          <tr><td>LearningPath</td><td><code>/path</code></td><td>protected</td><td>4 level cards with progress bars, locked/unlocked</td></tr>
+          <tr><td>LessonPage</td><td><code>/lesson/:id</code></td><td>protected</td><td>Lesson detail, verse, video, reflection, quiz, completion</td></tr>
+          <tr><td>Journal</td><td><code>/journal</code></td><td>protected</td><td>Spiritual journal — create + list entries</td></tr>
+          <tr><td>Profile</td><td><code>/profile</code></td><td>protected</td><td>Stats, 8 badges, reading plans, display name</td></tr>
+          <tr><td>NotFound</td><td>*</td><td>none</td><td>404 fallback</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Content &amp; progression model</h2>
+    <p class="section-sub">4 levels gate sequentially — level N unlocks only when every lesson in level N−1 is complete.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Level</th><th>Name</th><th>Content</th><th>XP / lesson</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0</td><td>Introduction</td><td>3 lessons + 1 reflection quiz</td><td>25</td></tr>
+          <tr><td>1</td><td>First Steps in Faith</td><td>5 lessons</td><td>40</td></tr>
+          <tr><td>2</td><td>Spiritual Habits</td><td>5 lessons</td><td>50</td></tr>
+          <tr><td>3</td><td>Living the Christian Life</td><td>5 lessons</td><td>60</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where state lives today</h2>
+    <p class="section-sub">The gap between what the UI shows and what the backend persists is the central technical fact for sprint planning.</p>
+    <div class="dataflow">
+      <div class="panel">
+        <h3>Live today <span class="pill">localStorage</span></h3>
+        <ul>
+          <li><code>useProgress()</code> reads/writes key <code>faithjourney-progress</code></li>
+          <li>completedLessons, xp, currentLevel, journalEntries, streak, quizAnswers, readingPlans, earnedBadges, userName</li>
+          <li>Badge logic runs client-side inside progress actions</li>
+          <li>Streak logic: same day → keep, yesterday → +1, else → reset to 1 (timezone-naive)</li>
+          <li>Static content served from <code>src/data/lessons.ts</code>, not the DB</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Ready but unused <span class="pill gap">cloud DB</span></h3>
+        <ul>
+          <li>Schema exists in Supabase: <code>completed_lessons</code>, <code>journal_entries</code>, <code>user_achievements</code>, <code>user_reading_progress</code>, <code>quiz_answers</code></li>
+          <li><code>profiles</code> row auto-created on signup via <code>handle_new_user</code> trigger</li>
+          <li><code>lessons</code>, <code>quiz_options</code>, <code>achievements</code>, <code>bible_plans</code> tables already seeded with content</li>
+          <li>No sync layer yet — nothing written here from the app except auth + profile creation</li>
+          <li>No hydrate-on-login step — a user's progress does not follow them across devices</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Design system snapshot</h2>
+    <p class="section-sub">For reference while reviewing screens — theme: "knocking on heaven's door", dark celestial, gold accent.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Token</th><th>Value</th><th>Use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>--background</code></td><td>225 25% 8%</td><td>Deep indigo night</td></tr>
+          <tr><td><code>--primary</code></td><td>38 65% 55%</td><td>Divine gold — CTAs, progress, accents</td></tr>
+          <tr><td><code>--card</code></td><td>225 20% 12%</td><td>Card surface</td></tr>
+          <tr><td>Display type</td><td>Cormorant Garamond</td><td>Headings, verses, reflection quotes</td></tr>
+          <tr><td>Body type</td><td>Inter</td><td>UI text</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    Source: <code class="inline-code">TECHNICAL_DOCS.md</code>, commit bd9b0de · Step 1 of 3 — next: compare this map against the live app screen by screen, then draft the sprint plan.
+  </footer>
+
+</div>
+</body>
+</html>
