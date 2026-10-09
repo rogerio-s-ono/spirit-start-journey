@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
@@ -40,6 +40,7 @@ export function useProgress() {
   const [progress, setProgress] = useState<UserProgress>(defaultProgress);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const syncTimerRef = useRef<NodeJS.Timeout>();
 
   // Load progress from Supabase or localStorage
   useEffect(() => {
@@ -194,8 +195,18 @@ export function useProgress() {
       }
     };
 
-    const timer = setTimeout(syncProgress, 1000); // Debounce syncs
-    return () => clearTimeout(timer);
+    // Clear previous timer
+    if (syncTimerRef.current) {
+      clearTimeout(syncTimerRef.current);
+    }
+
+    // Debounce syncs
+    syncTimerRef.current = setTimeout(syncProgress, 1000);
+    return () => {
+      if (syncTimerRef.current) {
+        clearTimeout(syncTimerRef.current);
+      }
+    };
   }, [progress, user, loading]);
 
   const completeLesson = useCallback((lessonId: string, xp: number) => {
