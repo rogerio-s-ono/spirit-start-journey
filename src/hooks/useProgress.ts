@@ -310,12 +310,16 @@ function useProgressState() {
           );
         if (error) {
           console.error("Error recording completed lesson:", error);
-          return;
         }
-        await loadProgress();
+        // NOTE: do NOT call loadProgress() here. Re-reading the whole state
+        // after each write races with the optimistic local update (and with
+        // other in-flight writes), which could overwrite the just-applied
+        // value with a stale DB read — the cause of the meter "snapping back".
+        // The optimistic state is the source of truth during the session; the
+        // DB is only persistence, re-read on mount/login.
       })();
     }
-  }, [user, loadProgress]);
+  }, [user]);
 
   const addJournalEntry = useCallback((type: JournalEntry["type"], content: string) => {
     const entry: JournalEntry = {
@@ -345,12 +349,10 @@ function useProgressState() {
           .insert({ user_id: user.id, type, content });
         if (error) {
           console.error("Error saving journal entry:", error);
-          return;
         }
-        await loadProgress();
       })();
     }
-  }, [user, loadProgress]);
+  }, [user]);
 
   const answerQuiz = useCallback((quizId: string, answer: string) => {
     setProgress((prev) => ({
@@ -371,12 +373,10 @@ function useProgressState() {
           );
         if (error) {
           console.error("Error saving quiz answer:", error);
-          return;
         }
-        await loadProgress();
       })();
     }
-  }, [user, loadProgress]);
+  }, [user]);
 
   const startReadingPlan = useCallback((planId: string) => {
     setProgress((prev) => {
@@ -402,12 +402,10 @@ function useProgressState() {
           );
         if (error) {
           console.error("Error starting reading plan:", error);
-          return;
         }
-        await loadProgress();
       })();
     }
-  }, [user, loadProgress]);
+  }, [user]);
 
   const advanceReadingPlan = useCallback((planId: string) => {
     let nextDay = 1;
@@ -424,19 +422,25 @@ function useProgressState() {
     // advances count correctly.
     if (user) {
       (async () => {
-        const { error } = await supabase
+        // Upsert (not update) so it works whether or not the row exists, and
+        // .select() to confirm a row was written. No loadProgress() afterward:
+        // the optimistic local state already reflects the new value, and
+        // re-reading here would race and could revert it.
+        const { data, error } = await supabase
           .from("user_reading_progress")
-          .update({ current_day: nextDay })
-          .eq("user_id", user.id)
-          .eq("plan_id", planId);
+          .upsert(
+            { user_id: user.id, plan_id: planId, current_day: nextDay },
+            { onConflict: "user_id,plan_id" }
+          )
+          .select();
         if (error) {
           console.error("Error advancing reading plan:", error);
-          return;
+        } else if (!data || data.length === 0) {
+          console.warn("Advance reading plan wrote 0 rows (RLS or missing row?)", { planId, nextDay });
         }
-        await loadProgress();
       })();
     }
-  }, [user, loadProgress]);
+  }, [user]);
 
   const setUserName = useCallback((name: string) => {
     setProgress((prev) => ({ ...prev, userName: name }));
