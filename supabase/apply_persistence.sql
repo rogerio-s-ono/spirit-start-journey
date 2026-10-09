@@ -154,3 +154,19 @@ ON CONFLICT (id) DO UPDATE SET
   reflection_question = EXCLUDED.reflection_question,
   xp                  = EXCLUDED.xp,
   type                = EXCLUDED.type;
+
+-- ===========================================================================
+-- Seed bible_plans (mirror of 20261009150000_seed_bible_plans.sql).
+-- Required: user_reading_progress.plan_id -> bible_plans(id) FK.
+-- ===========================================================================
+INSERT INTO public.bible_plans (id, name, description, chapters, icon)
+VALUES
+  ('john', 'Gospel of John', 'Discover who Jesus is through the eyes of His closest friend.', 21, '📖'),
+  ('mark', 'Gospel of Mark', 'A fast-paced account of Jesus'' life and ministry.', 16, '📕'),
+  ('psalms', 'Psalms', 'Songs and prayers that express every human emotion before God.', 150, '🎵'),
+  ('proverbs', 'Proverbs', 'Practical wisdom for everyday life.', 31, '💡')
+ON CONFLICT (id) DO UPDATE SET
+  name        = EXCLUDED.name,
+  description = EXCLUDED.description,
+  chapters    = EXCLUDED.chapters,
+  icon        = EXCLUDED.icon;
