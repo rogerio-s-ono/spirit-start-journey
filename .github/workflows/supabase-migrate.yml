@@ -82,7 +82,7 @@ jobs:
             echo "$resp" | grep -oE '"n"[[:space:]]*:[[:space:]]*[0-9]+' | grep -oE '[0-9]+$' | head -1
           }
           fail=0
-          for pair in "lessons:19" "achievements:8"; do
+          for pair in "lessons:19" "achievements:8" "bible_plans:4"; do
             table="${pair%%:*}"; min="${pair##*:}"
             n=$(query_count "$table")
             echo "public.${table} rows: ${n:-<none>} (min ${min})"
