@@ -42,11 +42,13 @@ export function useProgress() {
   const [syncing, setSyncing] = useState(false);
   const syncTimerRef = useRef<NodeJS.Timeout>();
 
-  // Load progress from Supabase or localStorage
-  useEffect(() => {
-    const loadProgress = async () => {
-      setLoading(true);
-      try {
+  // Load progress from Supabase or localStorage.
+  // Extracted into a ref-stable callback so it can also be called after a
+  // write (e.g. completing a lesson) to re-hydrate state from the database,
+  // which is the source of truth for XP and completed lessons.
+  const loadProgress = useCallback(async () => {
+    setLoading(true);
+    try {
         if (user) {
           // Load from Supabase
           const { data: profile, error: profileError } = await supabase
@@ -158,10 +160,12 @@ export function useProgress() {
       } finally {
         setLoading(false);
       }
-    };
-
-    loadProgress();
   }, [user]);
+
+  // Hydrate on mount and whenever the authenticated user changes.
+  useEffect(() => {
+    loadProgress();
+  }, [loadProgress]);
 
   // Sync progress to localStorage (fallback) and Supabase
   useEffect(() => {
@@ -175,11 +179,16 @@ export function useProgress() {
 
       setSyncing(true);
       try {
-        // Update profile
+        // Update profile.
+        // NOTE: xp_points is intentionally NOT written here. A database
+        // trigger (sync_profile_xp) is the source of truth for XP: it adds
+        // the lesson's XP on each insert into completed_lessons. If the
+        // client also wrote xp_points it would race with the trigger and
+        // overwrite the correct value, making progress appear to regress on
+        // reload.
         const { error: profileError } = await supabase
           .from("profiles")
           .update({
-            xp_points: progress.xp,
             current_level: progress.currentLevel,
             streak: progress.streak,
             last_visit: new Date(progress.lastVisit).toISOString().split("T")[0],
@@ -228,14 +237,29 @@ export function useProgress() {
       return { ...prev, completedLessons: newCompleted, xp: newXp, earnedBadges: newBadges };
     });
 
-    // Sync to Supabase if authenticated
+    // Persist to Supabase if authenticated.
+    // Use upsert with ignoreDuplicates so a repeated completion (the table
+    // has a unique(user_id, lesson_id) constraint) does not throw. We await
+    // the write and then re-hydrate from the database so local state matches
+    // what was actually persisted — including the XP computed by the
+    // sync_profile_xp trigger. This prevents the progress meter from
+    // regressing when navigating back to the dashboard.
     if (user) {
-      supabase
-        .from("completed_lessons")
-        .insert({ user_id: user.id, lesson_id: lessonId })
-        .catch(err => console.error("Error recording completed lesson:", err));
+      (async () => {
+        const { error } = await supabase
+          .from("completed_lessons")
+          .upsert(
+            { user_id: user.id, lesson_id: lessonId },
+            { onConflict: "user_id,lesson_id", ignoreDuplicates: true }
+          );
+        if (error) {
+          console.error("Error recording completed lesson:", error);
+          return;
+        }
+        await loadProgress();
+      })();
     }
-  }, [user]);
+  }, [user, loadProgress]);
 
   const addJournalEntry = useCallback((type: JournalEntry["type"], content: string) => {
     const entry: JournalEntry = {
