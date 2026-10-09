@@ -25,14 +25,12 @@ Em **GitHub → Settings → Secrets and variables → Actions → New repositor
 | Secret | Onde obter |
 |--------|-----------|
 | `SUPABASE_ACCESS_TOKEN` | Supabase → conta → **Access Tokens** (https://supabase.com/dashboard/account/tokens) → *Generate new token* |
-| `SUPABASE_PROJECT_REF` | O "ref" do projeto (ex.: `lawtzkhnhnyjtkptrlbs`). Fica na URL do dashboard: `.../project/<REF>`, ou em **Settings → General → Reference ID** |
+| `SUPABASE_PROJECT_REF` | O "ref" do projeto: **`lawtzkhnhnyjtkptrlbs`** (o mesmo da `VITE_SUPABASE_URL` e de `supabase/config.toml`). Também aparece em **Settings → General → Reference ID** |
 | `SUPABASE_DB_PASSWORD` | A senha do banco. **Settings → Database → Database password** (se não souber, pode redefinir ali) |
 
-> ⚠️ **Atenção ao project ref.** O arquivo `supabase/config.toml` tem
-> `project_id = "dsbutkdvcxrokbhxeoxx"`, mas o app (em `.env`/secrets do build)
-> aponta para `lawtzkhnhnyjtkptrlbs`. **Use em `SUPABASE_PROJECT_REF` o ref do
-> projeto que o app realmente usa** (o mesmo da `VITE_SUPABASE_URL`). Se os dois
-> forem o mesmo projeto, confirme qual é o correto antes de rodar.
+> ℹ️ O projeto correto é **`lawtzkhnhnyjtkptrlbs`**, já configurado em
+> `supabase/config.toml`. O secret `SUPABASE_PROJECT_REF` deve usar esse mesmo
+> valor.
 
 ## Escrever novas migrations
 
