@@ -6,61 +6,65 @@
 
 @layer base {
   :root {
-    --background: 225 25% 8%;
-    --foreground: 40 30% 95%;
+    /* ── "Amanhecer" (dawn) theme — light, sky-based. See design/especificacao-kiro.md ── */
+    --background: 204 78% 93%;        /* sky light  #DFF0FB */
+    --foreground: 213 32% 20%;        /* ink        #233244 (12.9:1 on bg — AAA) */
 
-    --card: 225 20% 12%;
-    --card-foreground: 40 30% 95%;
+    --card: 0 0% 100%;                /* white cards */
+    --card-foreground: 213 32% 20%;
 
-    --popover: 225 20% 12%;
-    --popover-foreground: 40 30% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 32% 20%;
 
-    --primary: 38 65% 55%;
-    --primary-foreground: 225 25% 8%;
+    --primary: 39 56% 52%;            /* gold accent #C99A42 (CTA/XP/badges only) */
+    --primary-foreground: 40 84% 6%;  /* #3A2C0F — 6.8:1 on gold gradient */
 
-    --secondary: 225 15% 20%;
-    --secondary-foreground: 40 30% 90%;
+    --secondary: 206 72% 85%;         /* horizon blue #BCDCF4 */
+    --secondary-foreground: 213 32% 20%;
 
-    --muted: 225 15% 16%;
-    --muted-foreground: 225 10% 55%;
+    --muted: 206 72% 89%;
+    --muted-foreground: 212 16% 42%;  /* soft text #5B6B7D (5.4:1 on bg — AA) */
 
-    --accent: 38 50% 45%;
-    --accent-foreground: 40 30% 95%;
+    --accent: 40 84% 95%;             /* sunlight #FDF6E8 (warm card tint) */
+    --accent-foreground: 213 32% 20%;
 
-    --destructive: 0 60% 50%;
+    --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 225 15% 18%;
-    --input: 225 15% 20%;
-    --ring: 38 65% 55%;
+    --border: 214 32% 91%;            /* line #E2E8F0 */
+    --input: 214 32% 91%;
+    --ring: 39 56% 52%;
 
     --radius: 1rem;
 
-    --sidebar-background: 225 20% 10%;
-    --sidebar-foreground: 40 30% 95%;
-    --sidebar-primary: 38 65% 55%;
-    --sidebar-primary-foreground: 225 25% 8%;
-    --sidebar-accent: 38 50% 45%;
-    --sidebar-accent-foreground: 40 30% 95%;
-    --sidebar-border: 225 15% 18%;
-    --sidebar-ring: 38 65% 55%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 213 32% 20%;
+    --sidebar-primary: 39 56% 52%;
+    --sidebar-primary-foreground: 40 84% 6%;
+    --sidebar-accent: 40 84% 95%;
+    --sidebar-accent-foreground: 213 32% 20%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 39 56% 52%;
 
-    /* Spiritual tokens */
-    --gold: 38 65% 55%;
-    --gold-light: 40 70% 70%;
-    --gold-foreground: 38 80% 25%;
-    --celestial: 225 30% 25%;
-    --celestial-deep: 225 35% 12%;
-    --divine-glow: 38 80% 60%;
-    --heaven: 215 40% 50%;
+    /* Spiritual tokens — remapped to the dawn palette */
+    --gold: 39 56% 52%;               /* #C99A42 */
+    --gold-light: 41 66% 71%;         /* #E7C783 */
+    --gold-foreground: 40 84% 6%;     /* #3A2C0F */
+    --celestial: 206 72% 85%;         /* horizon blue (was dark) */
+    --celestial-deep: 204 78% 93%;    /* sky light */
+    --divine-glow: 41 66% 71%;        /* soft gold glow */
+    --heaven: 206 72% 70%;            /* sky accent */
 
-    --gradient-divine: linear-gradient(135deg, hsl(38 65% 55%) 0%, hsl(30 70% 45%) 100%);
-    --gradient-heaven: linear-gradient(180deg, hsl(225 30% 6%) 0%, hsl(225 25% 14%) 50%, hsl(225 20% 18%) 100%);
-    --gradient-glow: radial-gradient(ellipse at center, hsl(38 65% 55% / 0.15) 0%, transparent 70%);
+    /* Gold gradient for CTAs/badges only (#E7C783 → #C99A42) */
+    --gradient-divine: linear-gradient(135deg, hsl(41 66% 71%) 0%, hsl(39 56% 52%) 100%);
+    /* Dawn sky: horizon blue → sky light → warm sunlight (replaces dark gradient) */
+    --gradient-heaven: linear-gradient(180deg, hsl(206 72% 88%) 0%, hsl(204 78% 93%) 55%, hsl(40 84% 95%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(41 66% 71% / 0.22) 0%, transparent 70%);
 
-    --shadow-divine: 0 0 30px hsl(38 65% 55% / 0.1);
-    --shadow-celestial: 0 8px 32px hsl(225 30% 4% / 0.6);
-    --shadow-lifted: 0 20px 60px hsl(225 30% 4% / 0.5);
+    /* Soft, light shadows (no more black glows over a light background) */
+    --shadow-divine: 0 2px 14px hsl(39 56% 52% / 0.12);
+    --shadow-celestial: 0 6px 18px hsl(210 40% 40% / 0.08);
+    --shadow-lifted: 0 20px 50px hsl(210 40% 40% / 0.15);
   }
 
   * {
@@ -90,29 +94,30 @@
     box-shadow: var(--shadow-lifted);
   }
   .card-celestial {
-    @apply bg-card/80 backdrop-blur-md rounded-2xl border border-border/50 shadow-celestial p-5;
+    @apply bg-card rounded-2xl border border-border shadow-celestial p-5;
   }
   .card-divine {
-    @apply bg-card/60 backdrop-blur-lg rounded-2xl border border-primary/10 shadow-divine p-5;
-    background-image: linear-gradient(135deg, hsl(38 65% 55% / 0.03) 0%, transparent 100%);
+    @apply bg-card rounded-2xl border border-border shadow-divine p-5;
   }
   .text-micro {
     @apply text-[11px] tracking-[0.12em] uppercase font-medium text-muted-foreground;
   }
+  /* Gold gradient text — for small marks/icons only, never body text. */
   .text-gold-gradient {
-    background: linear-gradient(135deg, hsl(40 70% 70%), hsl(38 65% 55%), hsl(30 60% 45%));
+    background: linear-gradient(135deg, hsl(41 66% 71%), hsl(39 56% 52%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+  /* Soft warm lift for the primary CTA (no neon glow on a light bg). */
   .glow-gold {
-    box-shadow: 0 0 20px hsl(38 65% 55% / 0.2), 0 0 60px hsl(38 65% 55% / 0.08);
+    box-shadow: 0 6px 18px hsl(39 56% 52% / 0.28);
   }
   .border-glow {
-    border-color: hsl(38 65% 55% / 0.3);
+    border-color: hsl(39 56% 52% / 0.35);
   }
   .divine-line {
     height: 1px;
-    background: linear-gradient(90deg, transparent, hsl(38 65% 55% / 0.4), transparent);
+    background: linear-gradient(90deg, transparent, hsl(39 56% 52% / 0.35), transparent);
   }
 }
