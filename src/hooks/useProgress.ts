@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, createContext, useContext, createElement, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { lessons, levels } from "@/data/lessons";
@@ -61,7 +61,7 @@ const defaultProgress: UserProgress = {
   userName: "",
 };
 
-export function useProgress() {
+function useProgressState() {
   const { user } = useAuth();
   const [progress, setProgress] = useState<UserProgress>(defaultProgress);
   const [loading, setLoading] = useState(true);
@@ -436,4 +436,32 @@ export function useProgress() {
     advanceReadingPlan,
     setUserName,
   };
+}
+
+type ProgressContextValue = ReturnType<typeof useProgressState>;
+
+const ProgressContext = createContext<ProgressContextValue | null>(null);
+
+/**
+ * Provides a SINGLE shared progress state to the whole app.
+ *
+ * Previously every page called useProgress() independently, so each one held
+ * its own copy of the state. Completing a lesson on LessonPage updated that
+ * page's copy and wrote to the DB, but navigating to the Dashboard mounted a
+ * fresh copy that reloaded from the DB — and because navigation happens before
+ * the async write settles, it read stale data and the meter regressed. With a
+ * provider, all pages read the same in-memory state, so progress is consistent
+ * immediately regardless of DB timing.
+ */
+export function ProgressProvider({ children }: { children: ReactNode }) {
+  const value = useProgressState();
+  return createElement(ProgressContext.Provider, { value }, children);
+}
+
+export function useProgress() {
+  const ctx = useContext(ProgressContext);
+  if (!ctx) {
+    throw new Error("useProgress must be used within a ProgressProvider");
+  }
+  return ctx;
 }
