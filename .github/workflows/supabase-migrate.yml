@@ -58,3 +58,31 @@ jobs:
       - name: Show remote migration status
         if: always()
         run: supabase migration list || true
+
+      - name: Verify achievements seed
+        # Post-migration sanity check: the achievement-unlock triggers require
+        # the achievements catalog to be populated (8 rows). If it is missing
+        # or incomplete, journal/lesson writes fail with a foreign-key error,
+        # so fail the job loudly here instead of discovering it in the app.
+        #
+        # Runs the query through the Supabase Management API (v1 /database/query)
+        # using the access token. This avoids needing the DB host/region or
+        # IPv6 connectivity, which the GitHub runner lacks for direct psql.
+        run: |
+          RESP=$(curl -sS -X POST \
+            "https://api.supabase.com/v1/projects/${SUPABASE_PROJECT_REF}/database/query" \
+            -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{"query":"select count(*)::int as n from public.achievements;"}')
+          echo "API response: $RESP"
+          COUNT=$(echo "$RESP" | grep -oE '"n"[[:space:]]*:[[:space:]]*[0-9]+' | grep -oE '[0-9]+$' | head -1)
+          echo "achievements rows: ${COUNT:-<none>}"
+          if [ -z "$COUNT" ]; then
+            echo "::warning::Could not parse achievements count from the Management API response; skipping strict verification."
+            exit 0
+          fi
+          if [ "$COUNT" -lt 8 ]; then
+            echo "::error::Expected at least 8 rows in public.achievements, found $COUNT. The seed migration did not apply correctly."
+            exit 1
+          fi
+          echo "Seed verification passed ($COUNT rows)."
