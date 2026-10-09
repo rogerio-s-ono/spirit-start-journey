@@ -12,6 +12,15 @@ import { Mail, Eye, EyeOff } from "lucide-react";
 import logoCross from "@/assets/logo-cross.png";
 import heavenBg from "@/assets/heaven-bg.jpg";
 
+// Build the post-auth redirect URL from the current origin plus the app's
+// base path (e.g. https://user.github.io/spirit-start-journey/). Using
+// window.location.origin alone drops the base path and breaks the redirect
+// on GitHub Pages.
+const getRedirectUrl = () => {
+  const base = import.meta.env.BASE_URL || "/";
+  return `${window.location.origin}${base}`.replace(/\/+$/, "/");
+};
+
 const Welcome = () => {
   const { t } = useLanguage();
   const [mode, setMode] = useState<"welcome" | "login" | "signup">("welcome");
@@ -28,7 +37,7 @@ const Welcome = () => {
     setError("");
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.origin },
+      options: { redirectTo: getRedirectUrl() },
     });
     if (error) setError(error.message || t("auth.errorGeneric"));
     setLoading(false);
@@ -52,7 +61,7 @@ const Welcome = () => {
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: getRedirectUrl(),
         data: { name },
       },
     });
