@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { Suspense } from "react";
+import { lazyWithRetry } from "@/lib/lazyWithRetry";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,12 +13,13 @@ import { ProgressProvider } from "@/hooks/useProgress";
 import Welcome from "./pages/Welcome";
 import NotFound from "./pages/NotFound";
 
-// Lazy load pages for code-splitting
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const LearningPath = lazy(() => import("./pages/LearningPath"));
-const LessonPage = lazy(() => import("./pages/LessonPage"));
-const Journal = lazy(() => import("./pages/Journal"));
-const Profile = lazy(() => import("./pages/Profile"));
+// Lazy load pages for code-splitting. lazyWithRetry auto-reloads once if a
+// chunk 404s after a new deploy (stale hash), instead of a hard crash.
+const Dashboard = lazyWithRetry(() => import("./pages/Dashboard"));
+const LearningPath = lazyWithRetry(() => import("./pages/LearningPath"));
+const LessonPage = lazyWithRetry(() => import("./pages/LessonPage"));
+const Journal = lazyWithRetry(() => import("./pages/Journal"));
+const Profile = lazyWithRetry(() => import("./pages/Profile"));
 
 // Loading fallback component
 const PageLoader = () => (

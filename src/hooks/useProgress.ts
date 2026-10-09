@@ -424,24 +424,14 @@ function useProgressState() {
     // advances count correctly.
     if (user) {
       (async () => {
-        // Use upsert (not update) so this works whether or not the row
-        // exists, and .select() so we can confirm a row was actually written.
-        // A plain .update() silently affects 0 rows if the row is missing or
-        // blocked by RLS, which made the counter advance locally and then
-        // "snap back" after loadProgress re-read the unchanged DB value.
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("user_reading_progress")
-          .upsert(
-            { user_id: user.id, plan_id: planId, current_day: nextDay },
-            { onConflict: "user_id,plan_id" }
-          )
-          .select();
+          .update({ current_day: nextDay })
+          .eq("user_id", user.id)
+          .eq("plan_id", planId);
         if (error) {
           console.error("Error advancing reading plan:", error);
           return;
-        }
-        if (!data || data.length === 0) {
-          console.warn("Advance reading plan wrote 0 rows (RLS or missing row?)", { planId, nextDay });
         }
         await loadProgress();
       })();
