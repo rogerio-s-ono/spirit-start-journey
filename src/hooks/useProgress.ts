@@ -280,14 +280,21 @@ export function useProgress() {
       };
     });
 
-    // Sync to Supabase if authenticated
+    // Persist to Supabase if authenticated, then re-hydrate from the DB so
+    // the entry carries its real server id/created_at and survives reloads.
     if (user) {
-      supabase
-        .from("journal_entries")
-        .insert({ user_id: user.id, type, content })
-        .catch(err => console.error("Error saving journal entry:", err));
+      (async () => {
+        const { error } = await supabase
+          .from("journal_entries")
+          .insert({ user_id: user.id, type, content });
+        if (error) {
+          console.error("Error saving journal entry:", error);
+          return;
+        }
+        await loadProgress();
+      })();
     }
-  }, [user]);
+  }, [user, loadProgress]);
 
   const answerQuiz = useCallback((quizId: string, answer: string) => {
     setProgress((prev) => ({
@@ -295,14 +302,25 @@ export function useProgress() {
       quizAnswers: { ...prev.quizAnswers, [quizId]: answer },
     }));
 
-    // Sync to Supabase if authenticated
+    // Persist to Supabase if authenticated. quiz_answers has
+    // unique(user_id, lesson_id); upsert on that key updates an existing
+    // answer instead of failing.
     if (user) {
-      supabase
-        .from("quiz_answers")
-        .upsert({ user_id: user.id, lesson_id: quizId, selected_option: answer })
-        .catch(err => console.error("Error saving quiz answer:", err));
+      (async () => {
+        const { error } = await supabase
+          .from("quiz_answers")
+          .upsert(
+            { user_id: user.id, lesson_id: quizId, selected_option: answer },
+            { onConflict: "user_id,lesson_id" }
+          );
+        if (error) {
+          console.error("Error saving quiz answer:", error);
+          return;
+        }
+        await loadProgress();
+      })();
     }
-  }, [user]);
+  }, [user, loadProgress]);
 
   const startReadingPlan = useCallback((planId: string) => {
     setProgress((prev) => {
@@ -315,31 +333,54 @@ export function useProgress() {
       };
     });
 
-    // Sync to Supabase if authenticated
+    // Persist to Supabase if authenticated. user_reading_progress has
+    // unique(user_id, plan_id); upsert with ignoreDuplicates avoids an error
+    // if the plan was already started.
     if (user) {
-      supabase
-        .from("user_reading_progress")
-        .insert({ user_id: user.id, plan_id: planId, current_day: 0 })
-        .catch(err => console.error("Error starting reading plan:", err));
+      (async () => {
+        const { error } = await supabase
+          .from("user_reading_progress")
+          .upsert(
+            { user_id: user.id, plan_id: planId, current_day: 0 },
+            { onConflict: "user_id,plan_id", ignoreDuplicates: true }
+          );
+        if (error) {
+          console.error("Error starting reading plan:", error);
+          return;
+        }
+        await loadProgress();
+      })();
     }
-  }, [user]);
+  }, [user, loadProgress]);
 
   const advanceReadingPlan = useCallback((planId: string) => {
-    setProgress((prev) => ({
-      ...prev,
-      readingPlans: { ...prev.readingPlans, [planId]: (prev.readingPlans[planId] || 0) + 1 },
-    }));
+    let nextDay = 1;
+    setProgress((prev) => {
+      nextDay = (prev.readingPlans[planId] || 0) + 1;
+      return {
+        ...prev,
+        readingPlans: { ...prev.readingPlans, [planId]: nextDay },
+      };
+    });
 
-    // Sync to Supabase if authenticated
+    // Persist to Supabase if authenticated. nextDay is derived from the
+    // updater's prev state (not a stale closure over progress), so repeated
+    // advances count correctly.
     if (user) {
-      supabase
-        .from("user_reading_progress")
-        .update({ current_day: (progress.readingPlans[planId] || 0) + 1 })
-        .eq("user_id", user.id)
-        .eq("plan_id", planId)
-        .catch(err => console.error("Error advancing reading plan:", err));
+      (async () => {
+        const { error } = await supabase
+          .from("user_reading_progress")
+          .update({ current_day: nextDay })
+          .eq("user_id", user.id)
+          .eq("plan_id", planId);
+        if (error) {
+          console.error("Error advancing reading plan:", error);
+          return;
+        }
+        await loadProgress();
+      })();
     }
-  }, [user, progress.readingPlans]);
+  }, [user, loadProgress]);
 
   const setUserName = useCallback((name: string) => {
     setProgress((prev) => ({ ...prev, userName: name }));
