@@ -1,6 +1,32 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { lessons, levels } from "@/data/lessons";
+
+/**
+ * Derive the user's current level from the lessons they've completed.
+ *
+ * The current level is the highest level that is "unlocked": level 0 is always
+ * unlocked, and each subsequent level unlocks once every lesson of the previous
+ * level is completed. This replaces the old `profiles.current_level` field,
+ * which was never incremented anywhere and left the dashboard meter stuck on
+ * (and regressing to) level 0 after every reload.
+ */
+export function deriveCurrentLevel(completedLessons: string[]): number {
+  const completed = new Set(completedLessons);
+  let current = 0;
+  for (const level of levels) {
+    const lessonsInLevel = lessons.filter((l) => l.levelId === level.id);
+    if (
+      lessonsInLevel.length > 0 &&
+      lessonsInLevel.every((l) => completed.has(l.id))
+    ) {
+      // This whole level is done; the next one becomes the current level.
+      current = Math.min(level.id + 1, levels.length - 1);
+    }
+  }
+  return current;
+}
 
 export interface JournalEntry {
   id: string;
@@ -117,10 +143,13 @@ export function useProgress() {
             streak = (profile?.streak || 0) + 1;
           }
 
+          const loadedCompleted = completedLessons?.map(l => l.lesson_id) || [];
           setProgress({
-            completedLessons: completedLessons?.map(l => l.lesson_id) || [],
+            completedLessons: loadedCompleted,
             xp: profile?.xp_points || 0,
-            currentLevel: profile?.current_level || 0,
+            // Derive from completed lessons so the dashboard meter reflects
+            // real progress and never regresses on reload.
+            currentLevel: deriveCurrentLevel(loadedCompleted),
             journalEntries: (entries || []).map(e => ({
               id: e.id,
               type: e.type as "prayer" | "reflection" | "thought",
@@ -143,12 +172,14 @@ export function useProgress() {
             const parsed = JSON.parse(stored);
             const today = new Date().toDateString();
             const yesterday = new Date(Date.now() - 86400000).toDateString();
+            // Always re-derive the current level from completed lessons.
+            const currentLevel = deriveCurrentLevel(parsed.completedLessons || []);
             if (parsed.lastVisit === today) {
-              setProgress(parsed);
+              setProgress({ ...parsed, currentLevel });
             } else if (parsed.lastVisit === yesterday) {
-              setProgress({ ...parsed, streak: parsed.streak + 1, lastVisit: today });
+              setProgress({ ...parsed, currentLevel, streak: parsed.streak + 1, lastVisit: today });
             } else {
-              setProgress({ ...parsed, streak: 1, lastVisit: today });
+              setProgress({ ...parsed, currentLevel, streak: 1, lastVisit: today });
             }
           } else {
             setProgress({ ...defaultProgress, lastVisit: new Date().toDateString(), streak: 1 });
@@ -234,7 +265,15 @@ export function useProgress() {
       if (level0Lessons.every(l => newCompleted.includes(l)) && !newBadges.includes("level-1")) newBadges.push("level-1");
       if (level1Lessons.every(l => newCompleted.includes(l)) && !newBadges.includes("level-2")) newBadges.push("level-2");
 
-      return { ...prev, completedLessons: newCompleted, xp: newXp, earnedBadges: newBadges };
+      return {
+        ...prev,
+        completedLessons: newCompleted,
+        xp: newXp,
+        earnedBadges: newBadges,
+        // Keep the level in sync with completed lessons immediately so the
+        // meter advances without waiting for the DB reload.
+        currentLevel: deriveCurrentLevel(newCompleted),
+      };
     });
 
     // Persist to Supabase if authenticated.
