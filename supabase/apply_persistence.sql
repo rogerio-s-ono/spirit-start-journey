@@ -87,3 +87,31 @@ SELECT u.id, COALESCE(u.raw_user_meta_data->>'name', '')
 FROM auth.users u
 LEFT JOIN public.profiles p ON p.user_id = u.id
 WHERE p.user_id IS NULL;
+
+-- ---------------------------------------------------------------------------
+-- Seed the achievements catalog.
+--
+-- REQUIRED: the achievement-unlock triggers (sync_progress migration) insert
+-- rows into user_achievements, which has a foreign key to achievements(id).
+-- If achievements is empty, inserting a journal entry / completing a lesson
+-- fails with:
+--   23503  Key (achievement_id)=(first-reflection) is not present in
+--          table "achievements"  (user_achievements_achievement_id_fkey)
+-- ...and the whole write (e.g. the journal entry) is rolled back.
+--
+-- Values mirror `badges` in src/data/lessons.ts. Idempotent via upsert.
+-- ---------------------------------------------------------------------------
+INSERT INTO public.achievements (id, name, description, icon, condition) VALUES
+  ('first-prayer',    'First Prayer',       'Wrote your first prayer',        '🙏', 'journal_prayer'),
+  ('first-reflection','First Reflection',   'Completed your first reflection','✍️', 'journal_reflection'),
+  ('first-lesson',    'First Lesson',       'Completed your first lesson',    '📘', 'lesson_1'),
+  ('week-streak',     '7-Day Journey',      'Used the app for 7 days',        '🔥', 'streak_7'),
+  ('level-1',         'Faithful Beginner',  'Completed Level 0',              '🌱', 'level_0_complete'),
+  ('level-2',         'Growing in Faith',   'Completed Level 1',              '🌿', 'level_1_complete'),
+  ('bible-reader',    'Bible Reader',       'Started a reading plan',         '📖', 'reading_plan'),
+  ('five-lessons',    'Dedicated Learner',  'Completed 5 lessons',            '⭐', 'lesson_5')
+ON CONFLICT (id) DO UPDATE
+  SET name        = EXCLUDED.name,
+      description = EXCLUDED.description,
+      icon        = EXCLUDED.icon,
+      condition   = EXCLUDED.condition;
