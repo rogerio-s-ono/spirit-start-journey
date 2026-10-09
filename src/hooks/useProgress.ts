@@ -77,14 +77,31 @@ function useProgressState() {
     try {
         if (user) {
           // Load from Supabase
-          const { data: profile, error: profileError } = await supabase
+          // maybeSingle() returns null (no error) when the profile row does
+          // not exist yet. Using single() here made PostgREST respond 404
+          // (PGRST116) on every reload for users without a profile row,
+          // showing a "Failed to load resource: 404" in the console on each
+          // re-hydration (e.g. the 2nd reading-plan action).
+          let { data: profile } = await supabase
             .from("profiles")
             .select("*")
             .eq("user_id", user.id)
-            .single();
+            .maybeSingle();
 
-          if (profileError && profileError.code !== "PGRST116") {
-            console.error("Error loading profile:", profileError);
+          // Self-heal: if this signed-in user has no profile row yet (e.g.
+          // account created before the handle_new_user trigger existed),
+          // create it so profile updates and future loads work.
+          if (!profile) {
+            const { data: created, error: createError } = await supabase
+              .from("profiles")
+              .insert({ user_id: user.id, name: user.user_metadata?.name ?? "" })
+              .select("*")
+              .maybeSingle();
+            if (createError) {
+              console.error("Error creating profile:", createError);
+            } else {
+              profile = created;
+            }
           }
 
           const { data: entries, error: entriesError } = await supabase

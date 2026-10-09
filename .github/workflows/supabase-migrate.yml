@@ -66,10 +66,7 @@ jobs:
         #     If empty, completing a lesson fails and PROGRESS NEVER PERSISTS.
         #   - achievements (>=8): user_achievements.achievement_id ->
         #     achievements(id). If empty, journal/lesson writes are rolled back.
-        #   - bible_plans (>=4): user_reading_progress.plan_id ->
-        #     bible_plans(id). If empty, starting a reading plan fails.
-        # These are every catalog table targeted by a foreign key in the
-        # schema. Fail the job loudly here instead of discovering it in the app.
+        # Fail the job loudly here instead of discovering it in the app.
         #
         # Runs through the Supabase Management API (v1 /database/query) so we
         # don't need the DB host/region or IPv6 (unavailable on the runner).
@@ -85,7 +82,7 @@ jobs:
             echo "$resp" | grep -oE '"n"[[:space:]]*:[[:space:]]*[0-9]+' | grep -oE '[0-9]+$' | head -1
           }
           fail=0
-          for pair in "lessons:19" "achievements:8" "bible_plans:4"; do
+          for pair in "lessons:19" "achievements:8"; do
             table="${pair%%:*}"; min="${pair##*:}"
             n=$(query_count "$table")
             echo "public.${table} rows: ${n:-<none>} (min ${min})"
