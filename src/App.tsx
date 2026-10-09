@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/i18n/LanguageContext";
 import { BottomNav } from "@/components/BottomNav";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
+import { ProgressProvider } from "@/hooks/useProgress";
 import Welcome from "./pages/Welcome";
 import NotFound from "./pages/NotFound";
 
@@ -62,12 +63,14 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter basename={import.meta.env.BASE_URL}>
-          <div className="flex flex-col min-h-screen">
-            <div className="flex-1">
-              <AppRoutes />
+          <ProgressProvider>
+            <div className="flex flex-col min-h-screen">
+              <div className="flex-1">
+                <AppRoutes />
+              </div>
+              <Footer />
             </div>
-            <Footer />
-          </div>
+          </ProgressProvider>
         </BrowserRouter>
       </TooltipProvider>
     </LanguageProvider>
