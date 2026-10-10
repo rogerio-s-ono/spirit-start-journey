@@ -56,6 +56,7 @@ export const translations = {
   "profile.lessons": { pt: "Lições", es: "Lecciones", en: "Lessons" },
   "profile.achievements": { pt: "Conquistas", es: "Logros", en: "Achievements" },
   "profile.readingPlans": { pt: "Planos de Leitura", es: "Planes de Lectura", en: "Bible Reading Plans" },
+  "profile.language": { pt: "Idioma", es: "Idioma", en: "Language" },
   "profile.setName": { pt: "Defina seu nome", es: "Define tu nombre", en: "Set your name" },
   "profile.yourName": { pt: "Seu nome", es: "Tu nombre", en: "Your name" },
   "profile.save": { pt: "Salvar", es: "Guardar", en: "Save" },
