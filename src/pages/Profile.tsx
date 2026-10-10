@@ -1,14 +1,24 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { useProgress } from "@/hooks/useProgress";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import { badges, readingPlans } from "@/data/lessons";
-import { Award, BookOpen, Flame, Star, User } from "lucide-react";
+import { Award, BookOpen, Flame, Globe, LogOut, Star, User } from "lucide-react";
 import { staggerContainer, fadeInUp } from "@/lib/animations";
 
 const Profile = () => {
   const { progress, setUserName, startReadingPlan, advanceReadingPlan } = useProgress();
   const { t } = useLanguage();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
   const [nameInput, setNameInput] = useState(progress.userName);
   const [editingName, setEditingName] = useState(!progress.userName);
 
@@ -141,6 +151,28 @@ const Profile = () => {
           })}
         </div>
       </motion.div>
+
+      {/* Language — moved here from the dashboard header */}
+      <motion.div variants={fadeInUp} className="mt-6">
+        <div className="flex items-center gap-2 mb-3">
+          <Globe className="w-4 h-4 text-primary" />
+          <h2 className="text-micro">{t("profile.language")}</h2>
+        </div>
+        <LanguageSelector />
+      </motion.div>
+
+      {/* Logout */}
+      {user && (
+        <motion.div variants={fadeInUp} className="mt-6">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border bg-card text-sm font-medium text-foreground/80 hover:bg-muted transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            {t("auth.logout")}
+          </button>
+        </motion.div>
+      )}
     </motion.div>
   );
 };

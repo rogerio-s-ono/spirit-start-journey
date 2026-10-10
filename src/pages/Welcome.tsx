@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { LanguageSwitchCompact } from "@/components/LanguageSelector";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -90,9 +90,9 @@ const Welcome = () => {
         initial="hidden"
         animate="show"
       >
-        {/* Language selector */}
+        {/* Language selector (compact, login only) */}
         <motion.div variants={fadeInUp} className="absolute top-6 right-6">
-          <LanguageSelector />
+          <LanguageSwitchCompact />
         </motion.div>
 
         {/* Logo & branding */}

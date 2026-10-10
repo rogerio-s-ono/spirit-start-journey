@@ -1,26 +1,17 @@
 import { motion } from "framer-motion";
 import { useProgress } from "@/hooks/useProgress";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { useAuth } from "@/hooks/useAuth";
-import { LanguageSelector } from "@/components/LanguageSelector";
 import { JourneyNode } from "@/components/JourneyNode";
 import { levels, lessons } from "@/data/lessons";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Flame, Star, ChevronRight, Sparkles, LogOut } from "lucide-react";
+import { BookOpen, Flame, Star, ChevronRight, Sparkles } from "lucide-react";
 import { staggerContainer, fadeInUp } from "@/lib/animations";
-import { Button } from "@/components/ui/button";
 import logoCross from "@/assets/logo-cross.png";
 
 const Dashboard = () => {
   const { progress } = useProgress();
-  const { t, language } = useLanguage();
-  const { user, signOut } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await signOut();
-    navigate("/");
-  };
 
   const currentLevel = levels[progress.currentLevel] || levels[0];
   const levelLessons = lessons.filter((l) => l.levelId === progress.currentLevel);
@@ -49,34 +40,25 @@ const Dashboard = () => {
       {/* Ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full bg-primary/8 blur-[100px] pointer-events-none" />
 
-      {/* Header */}
-      <motion.header variants={fadeInUp} className="sticky top-0 z-20 backdrop-blur-xl bg-background/60 border-b border-border/30 px-5 py-3">
+      {/* Header — slim: brand left, key metrics (streak + XP) right.
+          Language and logout now live in the Profile tab. */}
+      <motion.header variants={fadeInUp} className="sticky top-0 z-20 backdrop-blur-xl bg-background/70 border-b border-border/40 px-5 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={logoCross} alt="Elevation Path" className="w-8 h-8 object-contain" />
-            <span className="font-display text-lg font-semibold text-gold-gradient">Elevation Path</span>
+          <div className="flex items-center gap-2">
+            <img src={logoCross} alt="Elevation Path" className="w-7 h-7 object-contain" />
+            <span className="font-display text-base font-semibold text-gold-gradient">Elevation</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
-              <Star className="w-3.5 h-3.5 text-primary" />
-              <span className="text-xs font-medium text-primary">{progress.xp}</span>
+            {/* Streak — the hero metric, highlighted */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/25">
+              <Flame className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-primary tabular-nums">{progress.streak}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted border border-border/50">
-              <Flame className="w-3.5 h-3.5 text-primary" />
-              <span className="text-xs font-medium text-foreground/80">{progress.streak}</span>
+            {/* XP */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent border border-border/60">
+              <Star className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-foreground/80 tabular-nums">{progress.xp}</span>
             </div>
-            <LanguageSelector />
-            {user && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="h-8 w-8 p-0"
-                title={t("auth.logout") || "Logout"}
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
-            )}
           </div>
         </div>
       </motion.header>
