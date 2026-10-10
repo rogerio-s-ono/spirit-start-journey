@@ -102,10 +102,10 @@ const Welcome = () => {
             animate={{ y: [0, -6, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           >
-            <img src={logoCross} alt="Spirit Start" className="w-full h-full object-contain drop-shadow-[0_0_20px_hsl(38,65%,55%,0.4)]" />
+            <img src={logoCross} alt="Elevation Path" className="w-full h-full object-contain drop-shadow-[0_0_20px_hsl(38,65%,55%,0.4)]" />
           </motion.div>
           <h1 className="text-4xl font-display font-semibold text-gold-gradient tracking-tight mb-3">
-            Spirit Start
+            Elevation
           </h1>
           <p className="text-foreground/70 text-base leading-relaxed font-light max-w-[280px] mx-auto">
             {t("auth.subtitle")}

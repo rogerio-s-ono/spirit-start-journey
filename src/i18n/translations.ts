@@ -236,8 +236,8 @@ export const translations = {
   "plan.proverbs.desc": { pt: "Sabedoria prática para o dia a dia.", es: "Sabiduría práctica para la vida diaria.", en: "Practical wisdom for everyday life." },
 
   // Auth
-  "auth.welcome": { pt: "Jornada de Fé", es: "Camino de Fe", en: "Faith Journey" },
-  "auth.subtitle": { pt: "Descubra seu caminho espiritual, uma lição de cada vez.", es: "Descubre tu camino espiritual, una lección a la vez.", en: "Discover your spiritual path, one lesson at a time." },
+  "auth.welcome": { pt: "Elevation Path", es: "Elevation Path", en: "Elevation Path" },
+  "auth.subtitle": { pt: "Eleve sua fé, um passo de cada vez.", es: "Eleva tu fe, un paso a la vez.", en: "Elevate your faith, one step at a time." },
   "auth.continueGoogle": { pt: "Continuar com Google", es: "Continuar con Google", en: "Continue with Google" },
   "auth.or": { pt: "ou", es: "o", en: "or" },
   "auth.loginEmail": { pt: "Entrar com e-mail", es: "Iniciar sesión con email", en: "Sign in with email" },

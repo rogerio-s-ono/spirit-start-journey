@@ -53,8 +53,8 @@ const Dashboard = () => {
       <motion.header variants={fadeInUp} className="sticky top-0 z-20 backdrop-blur-xl bg-background/60 border-b border-border/30 px-5 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={logoCross} alt="Spirit Start" className="w-8 h-8 object-contain" />
-            <span className="font-display text-lg font-semibold text-gold-gradient">Spirit Start</span>
+            <img src={logoCross} alt="Elevation Path" className="w-8 h-8 object-contain" />
+            <span className="font-display text-lg font-semibold text-gold-gradient">Elevation Path</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
